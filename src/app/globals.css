@@ -1,0 +1,166 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme inline {
+  /* Marginalia palette, mapped onto shadcn's semantic tokens */
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
+  --color-card: var(--paper-raised);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--paper-raised);
+  --color-popover-foreground: var(--ink);
+  --color-primary: var(--pen);
+  --color-primary-foreground: var(--paper);
+  --color-secondary: var(--paper-sunken);
+  --color-secondary-foreground: var(--ink);
+  --color-muted: var(--paper-sunken);
+  --color-muted-foreground: var(--ink-soft);
+  --color-accent: var(--pen-wash);
+  --color-accent-foreground: var(--pen-deep);
+  --color-destructive: var(--error);
+  --color-destructive-foreground: var(--paper);
+  --color-border: var(--rule);
+  --color-input: var(--rule);
+  --color-ring: var(--pen);
+
+  --color-paper: var(--paper);
+  --color-paper-sunken: var(--paper-sunken);
+  --color-paper-raised: var(--paper-raised);
+  --color-paper-inverse: var(--paper-inverse);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-ink-inverse: var(--ink-inverse);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-pen: var(--pen);
+  --color-pen-deep: var(--pen-deep);
+  --color-pen-wash: var(--pen-wash);
+  --color-highlight: var(--highlight);
+  --color-highlight-soft: var(--highlight-soft);
+  --color-ok: var(--ok);
+  --color-error: var(--error);
+  --color-error-wash: var(--error-wash);
+
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-hand: var(--font-hand);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+
+  --text-xs: var(--step--2);
+  --text-sm: var(--step--1);
+  --text-base: var(--step-0);
+  --text-lg: var(--step-1);
+  --text-xl: var(--step-2);
+  --text-2xl: var(--step-3);
+  --text-3xl: var(--step-4);
+
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-7: var(--space-7);
+  --spacing-8: var(--space-8);
+  --spacing-9: var(--space-9);
+  --spacing-10: var(--space-10);
+}
+
+:root {
+  /* Paper */
+  --paper: #faf5eb;
+  --paper-sunken: #f2e9d9;
+  --paper-raised: #fffdf8;
+  --paper-inverse: #2a2724;
+
+  /* Graphite */
+  --ink: #2a2724;
+  --ink-soft: #6b635a;
+  --ink-faint: #a79c8d;
+  --ink-inverse: #faf5eb;
+
+  /* Rules */
+  --rule: #e5dac7;
+  --rule-strong: #c9b99e;
+
+  /* Pen */
+  --pen: #2f5d8a;
+  --pen-deep: #1e4266;
+  --pen-wash: #e4edf6;
+
+  /* Highlighter */
+  --highlight: #ffd75e;
+  --highlight-soft: #fff2c4;
+
+  /* States */
+  --ok: #3d6b4f;
+  --error: #b4402f;
+  --error-wash: #fbedea;
+
+  --radius: 0.375rem; /* 6px — cards and inputs; tags use rounded-full instead */
+
+  /* Fluid type scale (05-design-brief.md §2) */
+  --step--2: clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem);
+  --step--1: clamp(0.8125rem, 0.79rem + 0.2vw, 0.9375rem);
+  --step-0: clamp(0.9375rem, 0.9rem + 0.25vw, 1.0625rem);
+  --step-1: clamp(1.125rem, 1.05rem + 0.4vw, 1.3125rem);
+  --step-2: clamp(1.375rem, 1.2rem + 0.7vw, 1.75rem);
+  --step-3: clamp(1.875rem, 1.55rem + 1.3vw, 2.625rem);
+  --step-4: clamp(2.5rem, 1.9rem + 2.6vw, 4rem);
+
+  /* Spacing scale (05-design-brief.md §4) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
+
+  ::selection {
+    background-color: var(--highlight-soft);
+    color: var(--ink);
+  }
+}
+
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
