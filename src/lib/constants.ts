@@ -14,6 +14,26 @@ export const socialLinks = {
   portfolio: "https://webportfolio-two-phi.vercel.app/",
 } as const;
 
+export type PortfolioSample =
+  | { status: "filled"; label: string; caption: string; href: string }
+  | { status: "placeholder"; label: string };
+
+export const portfolioSamples: PortfolioSample[] = [
+  {
+    status: "filled",
+    label: "Presentation sample",
+    caption: "ClauseGuard — capstone research proposal",
+    href: "https://clauseguard-proposal-presentation.vercel.app/",
+  },
+  {
+    status: "filled",
+    label: "Case study sample",
+    caption: "Networking — WAN design for a two-office business",
+    href: "/portfolio/networking-case-study.pdf",
+  },
+  { status: "placeholder", label: "Capstone excerpt" },
+];
+
 export const navLinks = [
   { href: "#services", label: "Services" },
   { href: "#portfolio", label: "Portfolio" },
@@ -155,9 +175,9 @@ export const copy = {
   },
   portfolio: {
     heading: "Portfolio",
-    body: "Samples going up soon.",
+    body: "A few samples below.",
     subBody:
-      "Ask and I'll send a few over privately — most of my past work belongs to the people who paid for it.",
+      "More going up soon — most of what I build for clients stays private, but here's a look at how I work.",
   },
   about: {
     heading: "About",
