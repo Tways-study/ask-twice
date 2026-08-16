@@ -6,7 +6,12 @@ export const siteConfig = {
   description:
     "Presentations, case studies, capstone documents, and the assignments piling up behind them. Tell me what you need and when — I'll tell you what it costs.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://asktwice.dev", // [[TBD: domain]]
-  email: "hello@asktwice.dev", // [[TBD: Twice's receiving email]]
+  email: "twicenavarro23@gmail.com",
+} as const;
+
+export const socialLinks = {
+  facebook: "https://www.facebook.com/tways.varo/",
+  portfolio: "https://webportfolio-two-phi.vercel.app/",
 } as const;
 
 export const navLinks = [
