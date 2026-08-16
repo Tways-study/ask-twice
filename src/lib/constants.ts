@@ -121,7 +121,7 @@ export const processSteps = [
   },
   {
     label: "You get the files",
-    detail: "Editable source, not just a PDF. Two revisions are included.",
+    detail: "Editable source, not just a PDF. Three revisions are included.",
   },
 ] as const;
 
@@ -234,7 +234,7 @@ export const faqItems = [
   {
     question: "What if I need changes?",
     answer:
-      "Two revisions are included with every request. [[TBD: confirm final revision count]] After that, revisions are billed at a small hourly rate, and I'll quote it before starting.",
+      "Three revisions are included with every request. After that, revisions are billed at a small hourly rate, and I'll quote it before starting.",
   },
   {
     question: "Will anyone know?",
