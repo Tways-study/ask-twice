@@ -52,6 +52,13 @@ export const services: Service[] = [
     priceRange: "₱1,000–₱3,000+",
   },
   {
+    id: "development",
+    name: "Websites & apps",
+    description:
+      "Landing pages, small web apps, or straight-up code — building from scratch, fixing what's broken, or picking up where you left off.",
+    priceRange: "₱1,500–₱5,000+",
+  },
+  {
     id: "homework",
     name: "Homework & assignments",
     description: "Problem sets, essays, reports, weekly submissions. The steady stuff.",
@@ -76,6 +83,7 @@ export const serviceTypeLabels: Record<ServiceType, string> = {
   presentation: "Presentation",
   case_study: "Case study",
   capstone: "Capstone & thesis support",
+  development: "Websites & apps",
   homework: "Homework & assignments",
   research_paper: "Research paper",
   other: "Something else",

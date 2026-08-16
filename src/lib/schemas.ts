@@ -4,6 +4,7 @@ export const serviceTypes = [
   "presentation",
   "case_study",
   "capstone",
+  "development",
   "homework",
   "research_paper",
   "other",
