@@ -38,40 +38,40 @@ function ServiceRow({
   const [origin, setOrigin] = useState<"left" | "right">("left");
 
   return (
-    <Reveal index={index}>
-      <motion.div
-        className="relative border-b border-rule py-6 first:pt-0 last:border-b-0"
-        onHoverStart={() => {
-          setOrigin("left");
-          setHovered(true);
-        }}
-        onHoverEnd={() => {
-          setOrigin("right");
-          setHovered(false);
-        }}
-      >
-        <div className="lg:grid lg:grid-cols-12 lg:items-center lg:gap-6">
-          <div className="lg:col-span-7">
-            <h3 className="font-display text-xl font-bold text-ink">{service.name}</h3>
-            <p className="mt-1.5 max-w-[65ch] text-base leading-relaxed text-ink-soft">
-              {service.description}
-            </p>
-          </div>
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 lg:col-span-5 lg:mt-0 lg:justify-end">
-            <PriceTag priceRange={service.priceRange} hovered={hovered} />
-            <Button asChild variant="outline" size="default">
-              <a href="#contact">Ask about this</a>
-            </Button>
-          </div>
+    <Reveal
+      as="li"
+      index={index}
+      className="relative border-b border-rule py-6 first:pt-0 last:border-b-0"
+      onHoverStart={() => {
+        setOrigin("left");
+        setHovered(true);
+      }}
+      onHoverEnd={() => {
+        setOrigin("right");
+        setHovered(false);
+      }}
+    >
+      <div className="lg:grid lg:grid-cols-12 lg:items-center lg:gap-6">
+        <div className="lg:col-span-7">
+          <h3 className="font-display text-xl font-bold text-ink">{service.name}</h3>
+          <p className="mt-1.5 max-w-[65ch] text-base leading-relaxed text-ink-soft">
+            {service.description}
+          </p>
         </div>
-        <motion.div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-pen"
-          style={{ transformOrigin: origin }}
-          animate={{ scaleX: hovered ? 1 : 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.26, ease: "easeOut" }}
-        />
-      </motion.div>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 lg:col-span-5 lg:mt-0 lg:justify-end">
+          <PriceTag priceRange={service.priceRange} hovered={hovered} />
+          <Button asChild variant="outline" size="default">
+            <a href="#contact">Ask about this</a>
+          </Button>
+        </div>
+      </div>
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-pen"
+        style={{ transformOrigin: origin }}
+        animate={{ scaleX: hovered ? 1 : 0 }}
+        transition={{ duration: reduceMotion ? 0 : 0.26, ease: "easeOut" }}
+      />
     </Reveal>
   );
 }
@@ -83,11 +83,11 @@ export function Services() {
         <h2 className="font-display text-2xl font-bold tracking-[-0.02em] text-ink">
           What I take on
         </h2>
-        <div className="mt-8">
+        <ul className="mt-8">
           {services.map((service, index) => (
             <ServiceRow key={service.id} service={service} index={index} />
           ))}
-        </div>
+        </ul>
       </SectionGrid>
     </SectionWrapper>
   );

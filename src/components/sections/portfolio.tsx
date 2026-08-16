@@ -1,14 +1,11 @@
-"use client";
-
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
-import { ExternalLinkIcon, GraduationCapIcon } from "lucide-react";
+import { ArrowUpRightIcon, FileTextIcon } from "lucide-react";
 
-import { copy, portfolioSamples, type PortfolioSample } from "@/lib/constants";
-import { durationHover, easeHover } from "@/lib/motion";
+import { copy, portfolioSamples, serviceTypeLabels, type PortfolioSample } from "@/lib/constants";
 import { SectionWrapper } from "@/components/layout/section-wrapper";
 import { SectionGrid } from "@/components/layout/section-grid";
 import { Reveal } from "@/components/layout/reveal";
+import { ProcessStrip } from "@/components/sections/process-strip";
 import { Badge } from "@/components/ui/badge";
 
 function DashedBorder() {
@@ -29,40 +26,84 @@ function DashedBorder() {
   );
 }
 
-function WorkCard({ sample }: { sample: Extract<PortfolioSample, { status: "filled" }> }) {
-  const reduceMotion = useReducedMotion();
+function WorkRow({ sample }: { sample: Extract<PortfolioSample, { status: "filled" }> }) {
+  const isPdf = sample.hrefKind === "pdf";
+  const LinkIcon = isPdf ? FileTextIcon : ArrowUpRightIcon;
 
   return (
-    <motion.a
-      href={sample.href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group flex h-full flex-col overflow-hidden rounded-lg border border-rule bg-paper-raised transition-colors hover:border-pen"
-      whileHover={reduceMotion ? undefined : { y: -3 }}
-      whileTap={reduceMotion ? undefined : { y: 0, scale: 0.98 }}
-      transition={{ duration: durationHover, ease: easeHover }}
-    >
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-paper-sunken">
-        <Image
-          src={sample.thumbnail}
-          alt=""
-          fill
-          sizes="(min-width: 640px) 33vw, 100vw"
-          className="object-cover object-top transition-transform duration-300 group-hover:scale-105"
-        />
-        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-ink/30 to-transparent" aria-hidden="true" />
-        <div
-          className="absolute top-2 right-2 flex size-7 items-center justify-center rounded-full bg-paper-inverse/70 text-ink-inverse opacity-0 backdrop-blur-sm transition-opacity duration-150 group-hover:opacity-100"
-          aria-hidden="true"
-        >
-          <ExternalLinkIcon className="size-3.5" />
+    <>
+      <div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-6">
+        {/* Capped below lg: at ~768px an uncapped column renders a 689px-wide
+            image, which dwarfs the copy beside it. */}
+        <div className="relative aspect-[16/10] w-full max-w-[420px] overflow-hidden rounded-lg border border-rule bg-paper-sunken transition-colors group-hover:border-pen lg:col-span-5 lg:max-w-none">
+          <Image
+            src={sample.thumbnail}
+            alt={sample.alt}
+            fill
+            sizes="(min-width: 1024px) 320px, (min-width: 640px) 420px, 100vw"
+            className="object-cover object-top"
+          />
+        </div>
+
+        <div className="mt-4 lg:col-span-7 lg:mt-0">
+          <h3 className="font-display text-xl font-bold text-ink">{sample.title}</h3>
+
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
+            <Badge>{serviceTypeLabels[sample.serviceType]}</Badge>
+            <span className="text-sm text-ink-soft">{sample.subjectArea}</span>
+          </div>
+
+          {sample.summary && (
+            <p className="mt-3 max-w-[65ch] text-base leading-relaxed text-ink-soft">
+              {sample.summary}
+            </p>
+          )}
+
+          {(sample.deliverable || sample.tools) && (
+            <p className="mt-2 text-sm text-ink-soft">
+              {[sample.deliverable, sample.tools?.join(", ")].filter(Boolean).join(" · ")}
+            </p>
+          )}
+
+          <a
+            href={sample.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex min-h-11 items-center gap-1.5 font-sans text-base font-semibold text-pen underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-pen focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+          >
+            {sample.ctaLabel ?? (isPdf ? "Read the PDF" : "Open the live site")}
+            <LinkIcon className="size-4" aria-hidden="true" />
+          </a>
         </div>
       </div>
-      <div className="flex flex-1 flex-col justify-center gap-0.5 p-3">
-        <p className="text-sm font-medium text-ink">{sample.label}</p>
-        <p className="line-clamp-2 text-sm text-ink-soft">{sample.caption}</p>
+
+      {/* The pen draws along the bottom rule on hover and lifts from the right on
+          exit — the house idiom from ServiceRow, in CSS so the row stays a Server
+          Component. The global prefers-reduced-motion block zeroes the transition. */}
+      {/* Explicit `transform` rather than scale-x-*: those utilities share the
+          --tw-scale-x variable, so the hover value never overrides the base one. */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-px origin-right bg-pen [transform:scaleX(0)] transition-transform duration-[260ms] ease-out group-hover:origin-left group-hover:[transform:scaleX(1)] group-focus-within:origin-left group-focus-within:[transform:scaleX(1)]"
+      />
+    </>
+  );
+}
+
+function PlaceholderRow({ sample }: { sample: Extract<PortfolioSample, { status: "placeholder" }> }) {
+  return (
+    <div className="lg:grid lg:grid-cols-12 lg:items-start lg:gap-6">
+      <div className="relative flex aspect-[16/10] w-full items-end rounded-lg bg-paper-raised p-4 lg:col-span-5">
+        <DashedBorder />
+        <Badge variant="highlight">{serviceTypeLabels[sample.serviceType]}</Badge>
       </div>
-    </motion.a>
+      <div className="mt-4 lg:col-span-7 lg:mt-0">
+        <h3 className="font-display text-xl font-bold text-ink-soft">{sample.label}</h3>
+        <p className="mt-2 max-w-[65ch] text-base leading-relaxed text-ink-soft">
+          {copy.portfolio.placeholderBody}
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -78,35 +119,26 @@ export function Portfolio() {
           <span className="block text-base">{copy.portfolio.subBody}</span>
         </p>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-3">
-          {portfolioSamples.map((sample, index) => {
-            if (sample.status === "placeholder") {
-              return (
-                <Reveal key={sample.label} index={index}>
-                  <div className="group relative flex h-full min-h-56 flex-col items-center justify-center gap-3 rounded-lg bg-paper-raised text-center transition-colors">
-                    <DashedBorder />
-                    <GraduationCapIcon
-                      className="size-6 text-ink-faint transition-colors group-hover:text-ink-soft"
-                      aria-hidden="true"
-                    />
-                    <div>
-                      <p className="text-sm font-medium text-ink-soft">{sample.label}</p>
-                      <Badge variant="highlight" className="mt-1">
-                        Coming soon
-                      </Badge>
-                    </div>
-                  </div>
-                </Reveal>
-              );
-            }
+        {/* The border/padding variants live on the Reveal element itself: nested a
+            level deeper, every row would be both :first-child and :last-child. */}
+        <ul className="mt-8">
+          {portfolioSamples.map((sample, index) => (
+            <Reveal
+              as="li"
+              key={sample.status === "filled" ? sample.slug : sample.label}
+              index={index}
+              className="group relative border-b border-rule py-6 first:pt-0 last:border-b-0"
+            >
+              {sample.status === "placeholder" ? (
+                <PlaceholderRow sample={sample} />
+              ) : (
+                <WorkRow sample={sample} />
+              )}
+            </Reveal>
+          ))}
+        </ul>
 
-            return (
-              <Reveal key={sample.label} index={index}>
-                <WorkCard sample={sample} />
-              </Reveal>
-            );
-          })}
-        </div>
+        <ProcessStrip heading={copy.portfolio.processHeading} />
       </SectionGrid>
     </SectionWrapper>
   );

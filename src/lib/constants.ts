@@ -14,33 +14,114 @@ export const socialLinks = {
   portfolio: "https://webportfolio-two-phi.vercel.app/",
 } as const;
 
+// `summary`, `deliverable`, and `tools` are optional on purpose: the row renders
+// without them rather than carrying invented detail about real work.
+// [[TBD: write a summary + deliverable + tools for each sample]]
 export type PortfolioSample =
-  | { status: "filled"; label: string; caption: string; href: string; thumbnail: string }
-  | { status: "placeholder"; label: string };
+  | {
+      status: "filled";
+      slug: string;
+      title: string;
+      serviceType: ServiceType;
+      subjectArea: string;
+      summary?: string;
+      deliverable?: string;
+      tools?: readonly string[];
+      href: string;
+      hrefKind: "site" | "pdf";
+      // Overrides the generic "Open the live site" / "Read the PDF" link text —
+      // a case study and a proposal deck are both PDFs but shouldn't share a label.
+      ctaLabel?: string;
+      thumbnail: string;
+      alt: string;
+    }
+  | { status: "placeholder"; label: string; serviceType: ServiceType };
 
 export const portfolioSamples: PortfolioSample[] = [
   {
     status: "filled",
-    label: "Presentation sample",
-    caption: "ClauseGuard: capstone research proposal",
+    slug: "clauseguard",
+    title: "ClauseGuard",
+    serviceType: "presentation",
+    subjectArea: "Capstone research proposal",
     href: "https://clauseguard-proposal-presentation.vercel.app/",
+    hrefKind: "site",
     thumbnail: "/portfolio/thumb-presentation.png",
+    alt: "Title slide of the ClauseGuard capstone research proposal deck",
   },
   {
     status: "filled",
-    label: "Case study sample",
-    caption: "Networking: WAN design for a two-office business",
+    slug: "wan-design",
+    title: "WAN design for a two-office business",
+    serviceType: "case_study",
+    subjectArea: "Networking",
     href: "/portfolio/networking-case-study.pdf",
+    hrefKind: "pdf",
+    ctaLabel: "Read the case study (PDF)",
     thumbnail: "/portfolio/thumb-case-study.png",
+    alt: "Network diagram linking a main office and a branch office over a wide area network",
   },
   {
     status: "filled",
-    label: "Website sample",
-    caption: "Coffee Brewtherhood: specialty cafe site",
+    slug: "coffee-brewtherhood",
+    title: "Coffee Brewtherhood",
+    serviceType: "development",
+    subjectArea: "Specialty cafe site",
     href: "https://coffee-brewtherhood.vercel.app/",
+    hrefKind: "site",
     thumbnail: "/portfolio/thumb-website.jpg",
+    alt: "Homepage of the Coffee Brewtherhood specialty cafe website",
+  },
+  {
+    status: "filled",
+    slug: "pasa",
+    title: "PASA",
+    serviceType: "capstone",
+    subjectArea: "Capstone proposal defense",
+    summary:
+      "A proposal for a system that would screen permit application documents for missing fields and mismatches before the applicant makes the trip to file. Team capstone proposal — I was lead developer.",
+    deliverable: "23-slide proposal deck",
+    href: "/portfolio/pasa-proposal.pdf",
+    hrefKind: "pdf",
+    ctaLabel: "Read the proposal (PDF)",
+    thumbnail: "/portfolio/thumb-pasa.jpg",
+    alt: "Slide showing PASA's four-stage document verification pipeline: classify, extract, cross-validate, report",
+  },
+  {
+    status: "filled",
+    slug: "facilitrak",
+    title: "FaciliTrak",
+    serviceType: "capstone",
+    subjectArea: "Capstone proposal defense",
+    summary:
+      "A proposal for a system that would turn a photo of a broken classroom fixture into a tracked, assigned maintenance ticket. Team capstone proposal — I was lead developer.",
+    deliverable: "16-slide proposal deck",
+    href: "/portfolio/facilitrak-proposal.pdf",
+    hrefKind: "pdf",
+    ctaLabel: "Read the proposal (PDF)",
+    thumbnail: "/portfolio/thumb-facilitrak.jpg",
+    alt: "Slide showing FaciliTrak's four-stage reporting pipeline: report, classify, ticket, resolve",
   },
 ];
+
+export const processSteps = [
+  {
+    label: "You tell me what you need",
+    detail: "The form below, or a message. The deadline and the details help most.",
+  },
+  {
+    label: "I send a quote",
+    detail: "Within a day. Price and timeline both, before anything starts.",
+  },
+  {
+    label: "I build it",
+    detail: "Usually 2–5 days. If it'll take longer than that, I tell you upfront.",
+  },
+  {
+    label: "You get the files",
+    detail: "Editable source, not just a PDF. Two revisions are included.",
+  },
+] as const;
 
 export const navLinks = [
   { href: "#services", label: "Services" },
@@ -186,6 +267,9 @@ export const copy = {
     body: "A few samples below.",
     subBody:
       "More going up soon. Most of what I build for clients stays private, but here's a look at how I work.",
+    processHeading: "How a project actually goes",
+    placeholderBody:
+      "Going up once it's finished. Ask and I'll walk you through it in the meantime.",
   },
   about: {
     heading: "About",
