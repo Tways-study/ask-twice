@@ -34,6 +34,13 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
     type: "website",
   },
+  // Without this the card renders as a small square crop; the generated
+  // opengraph-image is 1200x630 and wants the wide treatment.
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.title,
+    description: siteConfig.description,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -1,11 +1,33 @@
 import type { BudgetRange, CapstoneStage, ContactMethod, ServiceType } from "@/lib/schemas";
 
+// Server-only: read in `app/layout.tsx` metadata and the OG image. Do not use
+// `siteConfig.url` in a client component — the Vercel vars below are not
+// NEXT_PUBLIC, so they resolve to undefined in the browser bundle.
+function resolveSiteUrl(): string {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, "");
+  const isLocalhost = configured
+    ? /^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0)(:|$|\/)/i.test(configured)
+    : false;
+
+  // Locally, localhost is the correct answer. In a deployed build it is a
+  // dev value someone copied into the dashboard, and honouring it would point
+  // every absolute URL, canonical, and link preview at an unreachable machine.
+  if (configured && !(isLocalhost && process.env.VERCEL)) {
+    return configured;
+  }
+
+  const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (vercelHost) return `https://${vercelHost}`;
+
+  return "https://asktwice.dev"; // [[TBD: domain]]
+}
+
 export const siteConfig = {
   name: "AskTwice",
   title: "AskTwice: schoolwork, handled",
   description:
     "Presentations, case studies, capstone documents, and the assignments piling up behind them. Tell me what you need and when. I'll tell you what it costs.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://asktwice.dev", // [[TBD: domain]]
+  url: resolveSiteUrl(),
   email: "twicenavarro23@gmail.com",
 } as const;
 
