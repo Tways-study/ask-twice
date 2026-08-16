@@ -160,7 +160,7 @@ export const faqItems = [
   {
     question: "How do I pay?",
     answer:
-      "GCash or bank transfer. [[TBD: confirm final payment methods]] Payment is due once you approve the quote, before I start the work.",
+      "GCash, bank transfer, or cash. Payment is due once you approve the quote, before I start the work.",
   },
   {
     question: "What subjects can you handle?",
