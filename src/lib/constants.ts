@@ -285,18 +285,19 @@ export const copy = {
     heading: "Frequently asked",
   },
   ask: {
-    heading: "Ask me something else",
-    lead: "Type a question and I'll answer it from what's already on this page.",
+    launcherLabel: "Ask me",
+    launcherClose: "Close",
+    heading: "Ask me something",
     // Load-bearing: a question answered instantly can read as Twice being live
     // at the keyboard. This says plainly that it isn't him.
-    disclosure: "These answers are automatic. The form below reaches me directly.",
+    disclosure: "Automatic answers, pulled from this page. The contact form reaches me directly.",
     inputLabel: "Your question",
-    placeholder: "How fast can you turn something around?",
+    placeholder: "How fast can you deliver?",
     submitLabel: "Ask",
-    starterPrompt: "Or start with one of these:",
+    starterPrompt: "Start with one of these:",
     emptyReply: "Type a question and I'll see what I've got.",
     missReply:
-      "I don't have a stored answer for that one. Send it through the form and I'll reply myself, usually within a day.",
+      "I don't have a stored answer for that one. Send it through the contact form and I'll reply myself, usually within a day.",
     missPrompt: "Things I can answer right now:",
     contactCta: "Ask me directly instead",
   },

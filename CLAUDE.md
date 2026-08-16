@@ -28,9 +28,10 @@ Marketing and client-intake website for Twice's freelance academic services. Sin
 ## Architecture
 
 - Single-page with anchor sections, NOT multi-page routes
-- All content is static (Server Components, SSG) except the contact form and the Ask section (Client Components)
+- All content is static (Server Components, SSG) except the contact form and `AskPanel` (Client Components)
 - One Server Action: `submitContactForm` — validates with Zod, posts to Formspree
-- The Ask section answers from a fixed intent table in `src/lib/chat-answers.ts`. No AI, no API, no network call — answers are looked up from `constants.ts` so the FAQ and the bot can never disagree on a number.
+- `AskPanel` is a corner-anchored launcher + panel mounted in `layout.tsx`, `z-30` (below nav at 40 and the drawer overlay at 50). It answers from a fixed intent table in `src/lib/chat-answers.ts`. No AI, no API, no network call — answers are looked up from `constants.ts` so the FAQ and the bot can never disagree on a number.
+- Toasts sit `top-center`, not bottom-right: the Ask launcher owns that corner.
 - NO database, NO auth, NO user accounts
 - File sharing via URL (Google Drive link), NOT direct upload
 
@@ -45,9 +46,9 @@ src/
 │   └── actions/
 │       └── contact.ts      # Server Action: validate + post to Formspree (+ tests)
 ├── components/
-│   ├── sections/           # Hero, Services, Portfolio, About, Faq, Ask, Contact, Footer
+│   ├── sections/           # Hero, Services, Portfolio, About, Faq, Contact, Footer
 │   ├── ui/                 # shadcn components (customized to tokens)
-│   └── layout/             # StickyNav, SectionWrapper, SectionGrid, Container, MarginNote, Highlight, Reveal
+│   └── layout/             # StickyNav, AskPanel, SectionWrapper, SectionGrid, Container, MarginNote, Highlight, Reveal
 └── lib/
     ├── schemas.ts          # Zod schemas (contactFormSchema, types) + tests
     ├── constants.ts        # Service data, FAQ data, pricing, site metadata, copy

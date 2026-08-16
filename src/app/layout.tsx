@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Plus_Jakarta_Sans, Caveat } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { AskPanel } from "@/components/layout/ask-panel";
 import { siteConfig } from "@/lib/constants";
 import "./globals.css";
 
@@ -43,7 +44,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="bg-paper text-ink">
         {children}
-        <Toaster position="bottom-right" />
+        <AskPanel />
+        {/* top-center, not bottom-right: the Ask launcher occupies that corner. */}
+        <Toaster position="top-center" />
       </body>
     </html>
   );
