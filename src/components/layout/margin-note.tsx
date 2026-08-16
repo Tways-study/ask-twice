@@ -22,26 +22,15 @@ export function MarginNote({
   }
 
   return (
-    <p aria-hidden="true" className={noteClass}>
-      <motion.span
-        className="mr-1.5 inline-block h-px w-3 -translate-y-1 bg-pen align-middle"
-        style={{ transformOrigin: "left" }}
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true, amount: 0.8 }}
-        transition={{ duration: 0.12, ease: "easeOut" }}
-      />
-      {/* Content stays fully painted — only position animates, so a missed
-          or delayed viewport trigger never leaves real text invisible. */}
-      <motion.span
-        className="inline-block"
-        initial={{ opacity: 1, y: 4 }}
-        whileInView={{ y: 0 }}
-        viewport={{ once: true, amount: 0.8 }}
-        transition={{ duration: 0.3, delay: 0.12, ease: [0.25, 0.1, 0.25, 1] }}
-      >
-        {children}
-      </motion.span>
-    </p>
+    <motion.p
+      aria-hidden="true"
+      className={noteClass}
+      initial={{ opacity: 1, y: 4 }}
+      whileInView={{ y: 0 }}
+      viewport={{ once: true, amount: 0.8 }}
+      transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+    >
+      {children}
+    </motion.p>
   );
 }
