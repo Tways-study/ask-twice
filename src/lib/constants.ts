@@ -15,7 +15,7 @@ export const socialLinks = {
 } as const;
 
 export type PortfolioSample =
-  | { status: "filled"; label: string; caption: string; href: string }
+  | { status: "filled"; label: string; caption: string; href: string; thumbnail: string }
   | { status: "placeholder"; label: string };
 
 export const portfolioSamples: PortfolioSample[] = [
@@ -24,14 +24,22 @@ export const portfolioSamples: PortfolioSample[] = [
     label: "Presentation sample",
     caption: "ClauseGuard — capstone research proposal",
     href: "https://clauseguard-proposal-presentation.vercel.app/",
+    thumbnail: "/portfolio/thumb-presentation.png",
   },
   {
     status: "filled",
     label: "Case study sample",
     caption: "Networking — WAN design for a two-office business",
     href: "/portfolio/networking-case-study.pdf",
+    thumbnail: "/portfolio/thumb-case-study.png",
   },
-  { status: "placeholder", label: "Capstone excerpt" },
+  {
+    status: "filled",
+    label: "Website sample",
+    caption: "Coffee Brewtherhood — specialty cafe site",
+    href: "https://coffee-brewtherhood.vercel.app/",
+    thumbnail: "/portfolio/thumb-website.jpg",
+  },
 ];
 
 export const navLinks = [
