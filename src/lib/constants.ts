@@ -44,6 +44,8 @@ export const portfolioSamples: PortfolioSample[] = [
     title: "ClauseGuard",
     serviceType: "presentation",
     subjectArea: "Capstone research proposal",
+    summary:
+      "The capstone proposal my panel approved. ClauseGuard reads a photo or scan of a contract, classifies its clauses, flags high-risk terms in plain language, and generates a risk report.",
     href: "https://clauseguard-proposal-presentation.vercel.app/",
     hrefKind: "site",
     thumbnail: "/portfolio/thumb-presentation.png",
