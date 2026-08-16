@@ -1,12 +1,8 @@
 "use server";
 
 import { headers } from "next/headers";
-import { Resend } from "resend";
 
 import { contactFormSchema, type ContactFormData } from "@/lib/schemas";
-import { siteConfig } from "@/lib/constants";
-
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 // In-memory per-IP counter — resets on cold start, acceptable at this scale (docs/04-tdd.md §11).
 const RATE_LIMIT_WINDOW_MS = 60_000;
@@ -24,31 +20,6 @@ function isRateLimited(ip: string) {
   return entry.count > RATE_LIMIT_MAX;
 }
 
-function formatEmailBody(data: ContactFormData) {
-  const conditionalLines = [
-    data.capstoneStage ? `STAGE: ${data.capstoneStage}` : null,
-    data.slideCount ? `SLIDES: ${data.slideCount}` : null,
-  ]
-    .filter(Boolean)
-    .join("\n");
-
-  return `From: ${data.name} (${data.email})
-Preferred contact: ${data.contactMethod}
-
-SERVICE: ${data.serviceType}
-SUBJECT: ${data.subject}
-DEADLINE: ${data.deadline}
-BUDGET: ${data.budgetRange}${conditionalLines ? `\n${conditionalLines}` : ""}
-
-DETAILS:
-${data.details}
-
-ADDITIONAL NOTES:
-${data.additionalNotes || "None"}
-
-FILE: ${data.fileUrl || "No file attached"}`;
-}
-
 export async function submitContactForm(
   data: ContactFormData
 ): Promise<{ success: boolean }> {
@@ -63,32 +34,33 @@ export async function submitContactForm(
     return { success: false };
   }
 
-  const subject = `[AskTwice] New Request: ${parsed.data.serviceType} — ${parsed.data.subject}`;
-  const body = formatEmailBody(parsed.data);
-  const receivingEmail = process.env.CONTACT_EMAIL ?? siteConfig.email;
+  const formId = process.env.FORMSPREE_FORM_ID;
+  const payload = {
+    ...parsed.data,
+    _subject: `[AskTwice] New Request: ${parsed.data.serviceType} — ${parsed.data.subject}`,
+    _replyto: parsed.data.email,
+  };
 
-  if (!resend) {
-    console.log("[contact] RESEND_API_KEY not set — logging submission instead of sending.\n", subject, "\n", body);
+  if (!formId) {
+    console.log("[contact] FORMSPREE_FORM_ID not set — logging submission instead of sending.\n", payload);
     return { success: true };
   }
 
   try {
-    const { error } = await resend.emails.send({
-      from: "AskTwice <onboarding@resend.dev>", // [[TBD: verified sending domain]]
-      to: receivingEmail,
-      replyTo: parsed.data.email,
-      subject,
-      text: body,
+    const response = await fetch(`https://formspree.io/f/${formId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(payload),
     });
 
-    if (error) {
-      console.error("[contact] Resend error:", error);
+    if (!response.ok) {
+      console.error("[contact] Formspree error:", response.status, await response.text());
       return { success: false };
     }
 
     return { success: true };
   } catch (err) {
-    console.error("[contact] Unexpected error sending email:", err);
+    console.error("[contact] Unexpected error sending submission:", err);
     return { success: false };
   }
 }

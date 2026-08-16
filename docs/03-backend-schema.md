@@ -6,7 +6,7 @@
 
 ## 1. Architecture: No database in v1
 
-AskTwice has no persistent data store. The only "backend" is a single Server Action that validates form input and sends an email via the Resend API. Twice's email inbox is the data store.
+AskTwice has no persistent data store. The only "backend" is a single Server Action that validates form input and forwards it to Formspree, which handles delivery. Twice's email inbox is the data store.
 
 This is a deliberate decision, not a deferral. A database is unjustified until request volume exceeds what email can manage (~20+/week consistently) or Twice needs to track order status, history, or analytics beyond Vercel's built-in.
 
@@ -21,7 +21,7 @@ Zod validation
     ├─ Invalid → return field errors → client shows inline messages
     │
     ▼ Valid
-Resend API call
+Formspree POST
     │
     ├─ Success → return success → client shows confirmation
     │
@@ -80,29 +80,14 @@ export const contactFormSchema = z.object({
 export type ContactFormData = z.infer<typeof contactFormSchema>
 ```
 
-## 4. Email template structure
+## 4. Email delivery
 
-The Server Action formats the validated form data into a structured email:
+The Server Action POSTs the validated form fields as JSON to `https://formspree.io/f/{FORMSPREE_FORM_ID}`, plus two of Formspree's reserved fields:
 
-```
-Subject: [AskTwice] New Request: {serviceType} — {subject}
+- `_subject`: `[AskTwice] New Request: {serviceType} — {subject}`
+- `_replyto`: `{email}` — so Twice can hit reply directly on the notification email
 
-From: {name} ({email})
-Preferred contact: {contactMethod}
-
-SERVICE: {serviceType}
-SUBJECT: {subject}
-DEADLINE: {deadline}
-BUDGET: {budgetRange}
-
-DETAILS:
-{details}
-
-ADDITIONAL NOTES:
-{additionalNotes || "None"}
-
-FILE: {fileUrl || "No file attached"}
-```
+Formspree auto-formats the rest of the submitted fields into a readable email; there's no hand-built template on our side.
 
 ## 5. Rate limiting
 

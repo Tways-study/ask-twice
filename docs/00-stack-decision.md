@@ -5,7 +5,7 @@
 
 ## Recommendation
 
-**Next.js 15 (App Router) · TypeScript strict · shadcn/ui + Tailwind CSS · Framer Motion · React Hook Form + Zod · Resend (email) · Vercel**
+**Next.js 15 (App Router) · TypeScript strict · shadcn/ui + Tailwind CSS · Framer Motion · React Hook Form + Zod · Formspree (form delivery) · Vercel**
 
 No database. No auth. No backend beyond a single Server Action or API route for form submission.
 
@@ -17,7 +17,7 @@ No database. No auth. No backend beyond a single Server Action or API route for 
 | Components | shadcn/ui | Radix primitives only | User-mandated. shadcn gives accessible primitives + styled defaults that can be token-overridden. Building from raw Radix adds work with no payoff for a marketing site. |
 | Animation | Framer Motion | CSS-only transitions | Framer Motion earns its place for scroll-triggered reveals, page transitions, and the hero — effects that are painful to orchestrate in pure CSS. For a marketing site, motion is a differentiator, not overhead. |
 | Forms | React Hook Form + Zod | Server Action with FormData | RHF gives client-side validation UX (inline errors, field-level feedback) that raw FormData cannot. Zod schema shared between client validation and server validation. |
-| Email | Resend | Supabase Edge Function → SMTP / Nodemailer | Resend has the cleanest DX, free tier covers 100 emails/day (orders of magnitude above expected volume), and a single API call from a Server Action. No database trigger needed because there is no database. |
+| Forms delivery | Formspree | Resend / Supabase Edge Function → SMTP | Formspree needs no email-provider account or sending-domain verification — just a form ID. Free tier (50 submissions/month) is well above expected volume, and delivery/spam-filtering/inbox routing are handled entirely on their side. A thin Server Action still re-validates with Zod and rate-limits before forwarding, so the client never talks to Formspree directly. |
 | Hosting | Vercel | Cloudflare Pages | Tways's existing deployment pipeline. Git push → deploy. Free tier is sufficient. |
 | Analytics | Vercel Analytics | Umami self-hosted | Free, zero-config, already in the Vercel dashboard. Self-hosted analytics is unjustified overhead for this scope. |
 

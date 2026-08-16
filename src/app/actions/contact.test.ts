@@ -1,13 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ContactFormData } from "@/lib/schemas";
 
-const sendMock = vi.fn();
-
-vi.mock("resend", () => ({
-  Resend: vi.fn().mockImplementation(function MockResend() {
-    return { emails: { send: sendMock } };
-  }),
-}));
+const fetchMock = vi.fn();
 
 vi.mock("next/headers", () => ({
   headers: vi.fn().mockResolvedValue(new Map([["x-forwarded-for", "203.0.113.1"]])),
@@ -29,43 +23,51 @@ describe("submitContactForm", () => {
 
   beforeEach(() => {
     vi.resetModules();
-    sendMock.mockReset();
-    process.env.CONTACT_EMAIL = "twice@example.com";
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
   });
 
   afterEach(() => {
     process.env = { ...originalEnv };
+    vi.unstubAllGlobals();
   });
 
-  it("logs instead of sending when RESEND_API_KEY is not set", async () => {
-    delete process.env.RESEND_API_KEY;
+  it("logs instead of posting when FORMSPREE_FORM_ID is not set", async () => {
+    delete process.env.FORMSPREE_FORM_ID;
     const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
     const { submitContactForm } = await import("./contact");
     const result = await submitContactForm(validData);
 
     expect(result.success).toBe(true);
-    expect(sendMock).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
     expect(logSpy).toHaveBeenCalled();
     logSpy.mockRestore();
   });
 
-  it("sends via Resend and reports success", async () => {
-    process.env.RESEND_API_KEY = "test-key";
-    sendMock.mockResolvedValue({ data: { id: "abc" }, error: null });
+  it("posts to Formspree and reports success", async () => {
+    process.env.FORMSPREE_FORM_ID = "test-form-id";
+    fetchMock.mockResolvedValue({ ok: true });
 
     const { submitContactForm } = await import("./contact");
     const result = await submitContactForm(validData);
 
     expect(result.success).toBe(true);
-    expect(sendMock).toHaveBeenCalledWith(
-      expect.objectContaining({ to: "twice@example.com", replyTo: validData.email })
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://formspree.io/f/test-form-id",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({ Accept: "application/json" }),
+      })
     );
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body._replyto).toBe(validData.email);
+    expect(body._subject).toContain(validData.subject);
   });
 
-  it("reports failure when Resend returns an error", async () => {
-    process.env.RESEND_API_KEY = "test-key";
-    sendMock.mockResolvedValue({ data: null, error: { message: "bad request" } });
+  it("reports failure when Formspree returns a non-ok response", async () => {
+    process.env.FORMSPREE_FORM_ID = "test-form-id";
+    fetchMock.mockResolvedValue({ ok: false, status: 422, text: async () => "bad request" });
 
     const { submitContactForm } = await import("./contact");
     const result = await submitContactForm(validData);
@@ -74,7 +76,7 @@ describe("submitContactForm", () => {
   });
 
   it("re-validates on the server and rejects malformed data", async () => {
-    delete process.env.RESEND_API_KEY;
+    delete process.env.FORMSPREE_FORM_ID;
     const { submitContactForm } = await import("./contact");
 
     const result = await submitContactForm({
@@ -83,6 +85,6 @@ describe("submitContactForm", () => {
     } as ContactFormData);
 
     expect(result.success).toBe(false);
-    expect(sendMock).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

@@ -2,7 +2,7 @@
 
 ## Project status
 
-Scaffolded and built — all 7 sections, the contact form, and the Server Action → Resend path are implemented and verified. The numbered `.md` files referenced below live in the `docs/` folder at the repo root.
+Scaffolded and built — all 7 sections, the contact form, and the Server Action → Formspree path are implemented and verified. The numbered `.md` files referenced below live in the `docs/` folder at the repo root.
 
 Commands:
 - `npm run dev` / `npm run build` / `npm run start`
@@ -10,11 +10,11 @@ Commands:
 - `npm run test` (Vitest) / `npm run test:watch`
 - `npm run test:e2e` (Playwright)
 
-Still outstanding (all non-blocking per `docs/01-prd.md` §8): real pricing figures, domain, `RESEND_API_KEY`, `CONTACT_EMAIL`, and portfolio samples — currently placeholders in `src/lib/constants.ts` and `.env.example`.
+Still outstanding (all non-blocking per `docs/01-prd.md` §8): real pricing figures, domain, `FORMSPREE_FORM_ID`, and portfolio samples — currently placeholders in `src/lib/constants.ts` and `.env.example`.
 
 ## Project summary
 
-Marketing and client-intake website for Twice's freelance academic services. Single-page, statically generated, one server interaction (contact form → email via Resend).
+Marketing and client-intake website for Twice's freelance academic services. Single-page, statically generated, one server interaction (contact form → Formspree).
 
 ## Tech stack
 
@@ -22,15 +22,14 @@ Marketing and client-intake website for Twice's freelance academic services. Sin
 - **Styling:** Tailwind CSS v4 + CSS custom properties (see `docs/05-design-brief.md` for tokens)
 - **Components:** shadcn/ui (base primitives, customized with project tokens)
 - **Animation:** Framer Motion (hero entrance, scroll reveals, accordion, nav transitions)
-- **Forms:** React Hook Form + Zod (shared schema for client + server validation)
-- **Email:** Resend SDK
+- **Forms:** React Hook Form + Zod (shared schema for client + server validation), submitted via Formspree
 - **Hosting:** Vercel
 
 ## Architecture
 
 - Single-page with anchor sections, NOT multi-page routes
 - All content is static (Server Components, SSG) except the contact form (Client Component)
-- One Server Action: `submitContactForm` — validates with Zod, sends via Resend
+- One Server Action: `submitContactForm` — validates with Zod, posts to Formspree
 - NO database, NO auth, NO user accounts
 - File sharing via URL (Google Drive link), NOT direct upload
 
@@ -43,7 +42,7 @@ src/
 │   ├── page.tsx             # Single page composing all sections
 │   ├── globals.css          # CSS custom properties (design tokens from design brief)
 │   └── actions/
-│       └── contact.ts      # Server Action: validate + send email (+ tests)
+│       └── contact.ts      # Server Action: validate + post to Formspree (+ tests)
 ├── components/
 │   ├── sections/           # Hero, Services, Portfolio, About, Faq, Contact, Footer
 │   ├── ui/                 # shadcn components (customized to tokens)
@@ -79,7 +78,7 @@ Every form input validated with Zod on BOTH client (RHF resolver) and server (Se
 
 ## Testing strategy
 
-- Unit + integration: Vitest — Zod schema validation, Server Action logic with Resend mocked
+- Unit + integration: Vitest — Zod schema validation, Server Action logic with `fetch` mocked
 - E2E: Playwright — one full contact-form journey (fill → submit → success state)
 - Full detail: `docs/04-tdd.md` §10
 
@@ -91,16 +90,15 @@ Every form input validated with Zod on BOTH client (RHF resolver) and server (Se
 
 ## Deployment & environments
 
-- Production: push to `main` → Vercel, live Resend key
-- Preview: push to any branch → Resend test mode, no real emails sent
-- Local: `next dev`, Resend test mode or console.log fallback
+- Production: push to `main` → Vercel, live `FORMSPREE_FORM_ID`
+- Preview: push to any branch → shares the same Formspree form (free tier caps at 50 submissions/month — watch usage if Preview traffic is high)
+- Local: `next dev`, console.log fallback when `FORMSPREE_FORM_ID` is unset
 - No error-tracking service in v1 — rely on Vercel function logs + `console.error` (`docs/04-tdd.md` §12)
 
 ## Environment variables
 
 ```
-RESEND_API_KEY=        # Resend API key
-CONTACT_EMAIL=         # Twice's email for receiving submissions
+FORMSPREE_FORM_ID=     # Formspree form ID (recipient email is set on Formspree's dashboard)
 NEXT_PUBLIC_SITE_URL=  # Production URL
 ```
 
