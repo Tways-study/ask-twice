@@ -36,7 +36,7 @@ export function StickyNav() {
   const backdropFilter = useMotionTemplate`blur(${blurPx}px)`;
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(min-width: 768px)");
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
     const onChange = () => setDrawerOpen(false);
     mediaQuery.addEventListener("change", onChange);
     return () => mediaQuery.removeEventListener("change", onChange);
@@ -65,7 +65,7 @@ export function StickyNav() {
             </motion.span>
           </a>
 
-          <nav className="hidden items-center gap-8 md:flex">
+          <nav className="hidden items-center gap-8 lg:flex">
             {navLinks.map((link) => (
               <a
                 key={link.href}
@@ -82,7 +82,7 @@ export function StickyNav() {
 
           <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden" aria-label="Open menu">
+              <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open menu">
                 <MenuIcon className="size-6" />
               </Button>
             </SheetTrigger>
