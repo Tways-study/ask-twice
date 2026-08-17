@@ -13,7 +13,7 @@ Still outstanding (all non-blocking per `docs/01-prd.md` §8), all marked `[[TBD
 - A domain (`resolveSiteUrl()` falls back to `https://asktwice.dev`)
 - Per-sample `summary` / `deliverable` / `tools` prose on the portfolio entries
 
-Portfolio samples themselves are done — five real `status: "filled"` entries. The `status: "placeholder"` variant and `PlaceholderRow` survive in the code but are currently unused.
+Portfolio samples themselves are done — six real `status: "filled"` entries. The `status: "placeholder"` variant and `PlaceholderCard` survive in the code but are currently unused.
 
 ## Commands
 

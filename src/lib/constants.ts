@@ -126,6 +126,20 @@ export const portfolioSamples: PortfolioSample[] = [
     thumbnail: "/portfolio/thumb-facilitrak.jpg",
     alt: "Slide showing FaciliTrak's four-stage reporting pipeline: report, classify, ticket, resolve",
   },
+  {
+    status: "filled",
+    slug: "handog-aral",
+    title: "Handog Aral",
+    serviceType: "development",
+    subjectArea: "Course project proposal",
+    summary:
+      "An AI literacy companion for Filipino children in rural areas and kids with dyslexia. Tap any word in a scanned book page for an instant definition in Hiligaynon or Filipino, with camera OCR, text-to-speech, and an offline fallback dictionary of 250+ words built in.",
+    deliverable: "Live PWA, wraps as an Android APK via Capacitor",
+    href: "https://handog-aral.vercel.app/",
+    hrefKind: "site",
+    thumbnail: "/portfolio/thumb-handog-aral.jpg",
+    alt: "Home screen of the Handog Aral literacy app, showing a Hiligaynon greeting, streak and star stats, and the scan-a-book call to action",
+  },
 ];
 
 export const processSteps = [
