@@ -1,16 +1,45 @@
-# AskTwice — CLAUDE.md
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+# AskTwice
 
 ## Project status
 
-Scaffolded and built — all 7 sections, the contact form, and the Server Action → Formspree path are implemented and verified. The numbered `.md` files referenced below live in the `docs/` folder at the repo root.
+Scaffolded and built — all 7 sections, the contact form, the `AskPanel`, and the Server Action → Formspree path are implemented and verified. The numbered `.md` files referenced below live in the `docs/` folder at the repo root.
 
-Commands:
-- `npm run dev` / `npm run build` / `npm run start`
-- `npm run lint`
-- `npm run test` (Vitest) / `npm run test:watch`
-- `npm run test:e2e` (Playwright)
+Still outstanding (all non-blocking per `docs/01-prd.md` §8), all marked `[[TBD: …]]` in `src/lib/constants.ts`:
+- Real pricing figures (the ₱ ranges on every service are placeholders)
+- A domain (`resolveSiteUrl()` falls back to `https://asktwice.dev`)
+- Per-sample `summary` / `deliverable` / `tools` prose on the portfolio entries
 
-Still outstanding (all non-blocking per `docs/01-prd.md` §8): real pricing figures, domain, `FORMSPREE_FORM_ID`, and portfolio samples — currently placeholders in `src/lib/constants.ts` and `.env.example`.
+Portfolio samples themselves are done — five real `status: "filled"` entries. The `status: "placeholder"` variant and `PlaceholderRow` survive in the code but are currently unused.
+
+## Commands
+
+```bash
+npm run dev            # dev server on :3000
+npm run build          # production build (runs tsc)
+npm run start          # serve the production build
+npm run lint           # eslint (no path arg — lints the project)
+npm run test           # vitest run
+npm run test:watch     # vitest watch
+npm run test:e2e       # playwright test
+```
+
+Single tests:
+
+```bash
+npx vitest run src/lib/chat-answers.test.ts        # one Vitest file
+npx vitest run -t "quotes the real case study"     # one test by name
+npx playwright test e2e/contact-form.spec.ts       # one spec
+npx playwright test -g "inline validation errors"  # one e2e test by name
+npx playwright test --headed --debug               # step through a spec
+```
+
+`npm run lint` emits one **expected** warning: React Compiler skips memoizing `contact-form.tsx` because React Hook Form's `watch()` can't be memoized safely. Zero errors is the passing bar; that warning is not a regression.
+
+`node scripts/generate-apple-icon.mjs` rasterises `src/app/icon.svg` into `apple-icon.png`. Deliberately not part of `npm run build` — run it by hand and commit the PNG (see the header comment for why).
 
 ## Project summary
 
@@ -29,7 +58,11 @@ Marketing and client-intake website for Twice's freelance academic services. Sin
 
 - Single-page with anchor sections, NOT multi-page routes
 - All content is static (Server Components, SSG) except the contact form and `AskPanel` (Client Components)
-- One Server Action: `submitContactForm` — validates with Zod, posts to Formspree
+- One Server Action: `submitContactForm` — validates with Zod, rate-limits, posts to Formspree. Three things about it are load-bearing:
+  - **Opaque return.** It resolves `{ success: boolean }` and nothing else. Validation failure, rate-limit trip, and a Formspree 5xx are indistinguishable to the client by design; detail goes to `console.error`, not to the caller.
+  - **In-memory per-IP rate limit** (5/min, keyed on `x-forwarded-for`). Resets on cold start — accepted at this scale per `docs/04-tdd.md` §11. Do not reach for a store to "fix" this.
+  - **Unset `FORMSPREE_FORM_ID` is a supported path**, not a failure: it logs the payload and returns `{ success: true }`, so the whole journey works locally and in tests without burning quota.
+- `siteConfig.url` comes from `resolveSiteUrl()` and is **server-only** — the Vercel vars it falls back to aren't `NEXT_PUBLIC`, so they're `undefined` in the browser bundle. It also refuses to honour a `localhost` `NEXT_PUBLIC_SITE_URL` when `VERCEL` is set, so a dev value pasted into the dashboard can't point canonicals and link previews at an unreachable machine.
 - `AskPanel` is a corner-anchored launcher + panel mounted in `layout.tsx`, `z-30` (below nav at 40 and the drawer overlay at 50). It answers from a fixed intent table in `src/lib/chat-answers.ts`. No AI, no API, no network call — answers are looked up from `constants.ts` so the FAQ and the bot can never disagree on a number.
 - Toasts sit `top-center`, not bottom-right: the Ask launcher owns that corner.
 - NO database, NO auth, NO user accounts
@@ -52,7 +85,7 @@ src/
 └── lib/
     ├── schemas.ts          # Zod schemas (contactFormSchema, types) + tests
     ├── constants.ts        # Service data, FAQ data, pricing, site metadata, copy
-    ├── chat-answers.ts     # Ask section: intent table + matcher (+ tests)
+    ├── chat-answers.ts     # AskPanel: intent table + matcher (+ tests)
     ├── motion.ts            # Shared durations/easings from the design brief §5
     └── utils.ts             # cn() and helpers
 
@@ -81,8 +114,9 @@ Every form input validated with Zod on BOTH client (RHF resolver) and server (Se
 
 ## Testing strategy
 
-- Unit + integration: Vitest — Zod schema validation, Server Action logic with `fetch` mocked
-- E2E: Playwright — one full contact-form journey (fill → submit → success state)
+- Unit + integration: Vitest — Zod schema validation, Server Action logic with `fetch` mocked, `chat-answers` intent matching. `jsdom` environment; specs are **colocated** next to the source (`src/**/*.test.{ts,tsx}`), not in a separate tree
+- E2E: Playwright — the full contact-form journey (fill → submit → success state), chromium only
+- `playwright.config.ts` starts its own dev server with `FORMSPREE_FORM_ID: ""` and `reuseExistingServer: false`. Both matter: the suite submits the real form, so it must take the log-instead-of-send path. **Never set `reuseExistingServer: true`** — it would attach to a server running with the real `.env` and post test submissions to Formspree (50/month free tier), emailing Twice a fake "Jamie Cruz" every run
 - Full detail: `docs/04-tdd.md` §10
 
 ## Performance budget

@@ -5,6 +5,7 @@ import { motion, useMotionTemplate, useReducedMotion, useScroll, useTransform } 
 import { MenuIcon } from "lucide-react";
 
 import { navLinks, siteConfig } from "@/lib/constants";
+import { useActiveSection } from "@/lib/use-active-section";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -15,6 +16,8 @@ import {
 } from "@/components/ui/sheet";
 import { Container } from "@/components/layout/container";
 
+const SECTION_IDS = navLinks.map((link) => link.href.replace("#", ""));
+
 // The condense reads as the page settling, not a threshold snap — height,
 // wordmark size, border, background, and blur all ease continuously with
 // scroll position over the first 120px, rather than toggling a class.
@@ -24,6 +27,7 @@ export function StickyNav() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const reduceMotion = useReducedMotion();
   const { scrollY } = useScroll();
+  const activeSection = useActiveSection(SECTION_IDS);
 
   const navHeight = useTransform(scrollY, CONDENSE_RANGE, [80, 64]);
   const wordmarkSize = useTransform(scrollY, CONDENSE_RANGE, [22, 18]);
@@ -66,15 +70,27 @@ export function StickyNav() {
           </a>
 
           <nav className="hidden items-center gap-8 lg:flex">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="flex h-11 items-center text-base font-medium text-ink-soft transition-colors hover:text-pen"
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = activeSection === link.href.replace("#", "");
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className={`relative flex h-11 items-center text-base font-medium transition-colors ${
+                    isActive ? "font-semibold text-pen" : "text-ink-soft hover:text-pen"
+                  }`}
+                >
+                  {link.label}
+                  {isActive && (
+                    <motion.span
+                      layoutId="activeNavIndicator"
+                      className="absolute inset-x-0 bottom-1.5 h-0.5 rounded-full bg-pen"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </a>
+              );
+            })}
             <Button asChild size="default">
               <a href="#contact">Get started</a>
             </Button>
@@ -98,20 +114,25 @@ export function StickyNav() {
                   visible: { transition: { staggerChildren: reduceMotion ? 0 : 0.04 } },
                 }}
               >
-                {navLinks.map((link) => (
-                  <motion.a
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setDrawerOpen(false)}
-                    className="flex min-h-11 items-center text-lg font-medium text-ink"
-                    variants={{
-                      hidden: { opacity: reduceMotion ? 1 : 0, x: reduceMotion ? 0 : 12 },
-                      visible: { opacity: 1, x: 0 },
-                    }}
-                  >
-                    {link.label}
-                  </motion.a>
-                ))}
+                {navLinks.map((link) => {
+                  const isActive = activeSection === link.href.replace("#", "");
+                  return (
+                    <motion.a
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setDrawerOpen(false)}
+                      className={`flex min-h-11 items-center text-lg font-medium ${
+                        isActive ? "font-semibold text-pen" : "text-ink"
+                      }`}
+                      variants={{
+                        hidden: { opacity: reduceMotion ? 1 : 0, x: reduceMotion ? 0 : 12 },
+                        visible: { opacity: 1, x: 0 },
+                      }}
+                    >
+                      {link.label}
+                    </motion.a>
+                  );
+                })}
                 <Button asChild size="default" className="mt-4">
                   <a href="#contact" onClick={() => setDrawerOpen(false)}>
                     Get started
@@ -125,3 +146,4 @@ export function StickyNav() {
     </motion.header>
   );
 }
+

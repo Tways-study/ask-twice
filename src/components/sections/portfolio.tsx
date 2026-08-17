@@ -1,12 +1,24 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import { ArrowUpRightIcon, FileTextIcon } from "lucide-react";
 
 import { copy, portfolioSamples, serviceTypeLabels, type PortfolioSample } from "@/lib/constants";
+import { type ServiceType } from "@/lib/schemas";
 import { SectionWrapper } from "@/components/layout/section-wrapper";
 import { SectionGrid } from "@/components/layout/section-grid";
 import { Reveal } from "@/components/layout/reveal";
 import { ProcessStrip } from "@/components/sections/process-strip";
 import { Badge } from "@/components/ui/badge";
+
+const CATEGORY_FILTERS: { id: "all" | ServiceType; label: string }[] = [
+  { id: "all", label: "All samples" },
+  { id: "presentation", label: "Presentations" },
+  { id: "case_study", label: "Case studies" },
+  { id: "capstone", label: "Capstone" },
+  { id: "development", label: "Websites & apps" },
+];
 
 function DashedBorder() {
   return (
@@ -77,11 +89,6 @@ function WorkRow({ sample }: { sample: Extract<PortfolioSample, { status: "fille
         </div>
       </div>
 
-      {/* The pen draws along the bottom rule on hover and lifts from the right on
-          exit — the house idiom from ServiceRow, in CSS so the row stays a Server
-          Component. The global prefers-reduced-motion block zeroes the transition. */}
-      {/* Explicit `transform` rather than scale-x-*: those utilities share the
-          --tw-scale-x variable, so the hover value never overrides the base one. */}
       <span
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 bottom-0 h-px origin-right bg-pen [transform:scaleX(0)] transition-transform duration-[260ms] ease-out group-hover:origin-left group-hover:[transform:scaleX(1)] group-focus-within:origin-left group-focus-within:[transform:scaleX(1)]"
@@ -108,6 +115,13 @@ function PlaceholderRow({ sample }: { sample: Extract<PortfolioSample, { status:
 }
 
 export function Portfolio() {
+  const [activeFilter, setActiveFilter] = useState<"all" | ServiceType>("all");
+
+  const filteredSamples =
+    activeFilter === "all"
+      ? portfolioSamples
+      : portfolioSamples.filter((sample) => sample.serviceType === activeFilter);
+
   return (
     <SectionWrapper id="portfolio" tone="paper">
       <SectionGrid>
@@ -119,10 +133,29 @@ export function Portfolio() {
           <span className="block text-base">{copy.portfolio.subBody}</span>
         </p>
 
-        {/* The border/padding variants live on the Reveal element itself: nested a
-            level deeper, every row would be both :first-child and :last-child. */}
+        {/* Category filter pills */}
+        <div className="mt-6 flex flex-wrap gap-2">
+          {CATEGORY_FILTERS.map((filter) => {
+            const isSelected = activeFilter === filter.id;
+            return (
+              <button
+                key={filter.id}
+                type="button"
+                onClick={() => setActiveFilter(filter.id)}
+                className={`inline-flex min-h-11 items-center rounded-full border px-4 text-xs font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-pen focus-visible:ring-offset-2 focus-visible:ring-offset-paper ${
+                  isSelected
+                    ? "border-pen bg-pen font-semibold text-paper"
+                    : "border-rule bg-paper-raised text-ink-soft hover:border-pen hover:text-pen"
+                }`}
+              >
+                {filter.label}
+              </button>
+            );
+          })}
+        </div>
+
         <ul className="mt-8">
-          {portfolioSamples.map((sample, index) => (
+          {filteredSamples.map((sample, index) => (
             <Reveal
               as="li"
               key={sample.status === "filled" ? sample.slug : sample.label}
@@ -143,3 +176,4 @@ export function Portfolio() {
     </SectionWrapper>
   );
 }
+

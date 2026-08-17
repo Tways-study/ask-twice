@@ -52,7 +52,15 @@ function SuggestionChips({
   );
 }
 
-function ExchangeRow({ exchange, onPick }: { exchange: Exchange; onPick: (intent: Intent) => void }) {
+function ExchangeRow({
+  exchange,
+  onPick,
+  onClose,
+}: {
+  exchange: Exchange;
+  onPick: (intent: Intent) => void;
+  onClose: () => void;
+}) {
   return (
     <li className="border-b border-rule py-4 first:pt-0 last:border-b-0">
       <p className="font-sans text-sm font-semibold text-ink">{exchange.question}</p>
@@ -71,6 +79,7 @@ function ExchangeRow({ exchange, onPick }: { exchange: Exchange; onPick: (intent
       {exchange.offerContact && (
         <a
           href="#contact"
+          onClick={onClose}
           className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-pen underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-pen focus-visible:ring-offset-2 focus-visible:ring-offset-paper-raised"
         >
           {copy.ask.contactCta}
@@ -203,6 +212,7 @@ export function AskPanel() {
                       key={exchange.id}
                       exchange={exchange}
                       onPick={(intent) => ask(intent.label)}
+                      onClose={() => setOpen(false)}
                     />
                   ))}
                 </ul>

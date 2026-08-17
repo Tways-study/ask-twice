@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +15,7 @@ import {
   capstoneStages,
   type ContactFormData,
   type ContactFormInput,
+  type ServiceType,
 } from "@/lib/schemas";
 import {
   copy,
@@ -108,6 +109,7 @@ export function ContactForm() {
     control,
     reset,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<ContactFormInput, unknown, ContactFormData>({
     resolver: zodResolver(contactFormSchema),
@@ -120,6 +122,18 @@ export function ContactForm() {
   });
 
   const serviceType = watch("serviceType");
+
+  useEffect(() => {
+    function handleSelectService(event: Event) {
+      const customEvent = event as CustomEvent<ServiceType>;
+      if (customEvent.detail) {
+        setValue("serviceType", customEvent.detail, { shouldValidate: true });
+      }
+    }
+
+    window.addEventListener("asktwice:select-service", handleSelectService);
+    return () => window.removeEventListener("asktwice:select-service", handleSelectService);
+  }, [setValue]);
 
   async function onSubmit(data: ContactFormData) {
     setStatus("submitting");
@@ -336,6 +350,9 @@ export function ContactForm() {
                             {...register("fileUrl")}
                             aria-invalid={!!errors.fileUrl}
                           />
+                          <p className="mt-1 text-[11px] text-ink-inverse/60">
+                            💡 Tip: Make sure link sharing is set to &ldquo;Anyone with link can view&rdquo;
+                          </p>
                         </Field>
                       </DisclosedField>
                       <DisclosedField index={6} reduceMotion={reduceMotion}>

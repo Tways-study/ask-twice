@@ -61,7 +61,18 @@ function ServiceRow({
         <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 lg:col-span-5 lg:mt-0 lg:justify-end">
           <PriceTag priceRange={service.priceRange} hovered={hovered} />
           <Button asChild variant="outline" size="default">
-            <a href="#contact">Ask about this</a>
+            <a
+              href="#contact"
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  window.dispatchEvent(
+                    new CustomEvent("asktwice:select-service", { detail: service.id })
+                  );
+                }
+              }}
+            >
+              Ask about this
+            </a>
           </Button>
         </div>
       </div>
