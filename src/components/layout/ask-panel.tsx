@@ -182,7 +182,7 @@ export function AskPanel() {
           >
             <div className="flex items-start justify-between gap-3 border-b border-rule p-4">
               <div>
-                <h2 className="font-display text-lg font-bold text-ink">{copy.ask.heading}</h2>
+                <h2 className="font-display text-lg font-semibold text-ink">{copy.ask.heading}</h2>
                 <p className="mt-1 text-xs leading-relaxed text-ink-soft">{copy.ask.disclosure}</p>
               </div>
               <button
@@ -244,8 +244,10 @@ export function AskPanel() {
         )}
       </AnimatePresence>
 
-      {/* A squared tab, not a circular FAB: 6px radius and a 1px rule with no
-          shadow, per the brief's card rules. */}
+      {/* A squared tab, not a circular FAB or pill — deliberately breaks from
+          the button/badge pill convention so it doesn't read as a generic
+          chat widget. Radius follows --radius (10px) like the rest of the
+          panel's UI chrome. */}
       <motion.button
         ref={launcherRef}
         type="button"

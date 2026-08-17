@@ -276,15 +276,16 @@ export const faqItems = [
 
 export const copy = {
   hero: {
+    eyebrow: "For students, by a student",
     headline: "Schoolwork,",
     highlightedWord: "handled.",
     lead: "Presentations, case studies, capstone documents, and the assignments piling up behind them. Tell me what you need and when. I'll tell you what it costs.",
     primaryCta: "Tell me about your project",
     secondaryCta: "See what I charge",
-    marginNote: "no commitment: ask first, decide after",
+    marginNote: "No commitment — ask first, decide after.",
   },
   services: {
-    marginNote: "rush jobs cost more, but I'll always tell you first",
+    marginNote: "Rush jobs cost more — but I'll always tell you first.",
   },
   portfolio: {
     heading: "Portfolio",
@@ -301,7 +302,7 @@ export const copy = {
       "I'm Twice. I'm a third-year IT student now (I started out in Medical Laboratory Science before shifting), and I've spent the last two years building software and writing documentation since.",
     body: "Right now that means classes, my own capstone project, and a steady stream of requests just like the one you're about to send. I know what a deadline looks like from your side of the screen, because I'm usually staring down one of my own.",
     highlightedPhrase: "I'm a student too",
-    marginNote: "same deadlines as you, honestly",
+    marginNote: "Same deadlines as you, honestly.",
   },
   faq: {
     heading: "Frequently asked",
@@ -332,6 +333,6 @@ export const copy = {
     successTitle: "Got it",
     successBody: (email: string) => `I'll reply to ${email} within a day.`,
     failureBody: `That didn't send. Email me directly at ${siteConfig.email} and I'll pick it up there.`,
-    marginNote: "I read every one of these myself",
+    marginNote: "I read every one of these myself.",
   },
 } as const;

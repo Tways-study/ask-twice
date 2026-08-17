@@ -5,13 +5,15 @@ import { Slot } from "radix-ui";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border font-sans text-base font-semibold whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-2 focus-visible:ring-pen focus-visible:ring-offset-2 focus-visible:ring-offset-paper disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  // Filled Pill Button / Ghost Pill Button, per the reference: 980px-radius
+  // pills, regular-weight label (the reference's own spec, not the brief's
+  // former semibold).
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-full border font-sans text-base font-normal whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-2 focus-visible:ring-pen focus-visible:ring-offset-2 focus-visible:ring-offset-paper disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
         default: "border-transparent bg-pen text-paper hover:bg-pen-deep",
-        outline:
-          "border-rule bg-transparent text-ink hover:border-pen hover:text-pen",
+        outline: "border-ink/80 bg-transparent text-ink hover:border-pen hover:text-pen",
         ghost: "border-transparent bg-transparent text-ink hover:bg-paper-sunken",
         link: "border-transparent bg-transparent p-0 text-pen underline-offset-4 hover:underline",
       },

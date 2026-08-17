@@ -81,7 +81,7 @@ src/
 ├── components/
 │   ├── sections/           # Hero, Services, Portfolio, About, Faq, Contact, Footer
 │   ├── ui/                 # shadcn components (customized to tokens)
-│   └── layout/             # StickyNav, AskPanel, SectionWrapper, SectionGrid, Container, MarginNote, Highlight, Reveal
+│   └── layout/             # StickyNav, AskPanel, SectionWrapper, Container, MarginNote, Highlight, Reveal
 └── lib/
     ├── schemas.ts          # Zod schemas (contactFormSchema, types) + tests
     ├── constants.ts        # Service data, FAQ data, pricing, site metadata, copy
@@ -95,18 +95,19 @@ vitest.config.mts · playwright.config.ts
 
 ## Design rules (non-negotiable)
 
-Direction: **"Marginalia"** — warm paper, graphite ink, pen-blue margin notes, one highlighter.
-Register: a capable classmate, not a vendor. Warm and direct, never cutesy or salesy.
+Direction: **"Cathedral, annotated"** — adapted from the Apple-style reference at styles.refero.design (style `c9cabb96-32fa-4896-837a-f2497ce1c856`, "Apple (España)"): near-white monochrome canvas, oversized weight-800 headlines, one electric-blue accent, borderless cards, alternating white/gray section bands. Two personal touches from the original "Marginalia" build (v0.2) are layered back on top, deliberately rationed: handwritten `MarginNote` asides (4 max) and the marigold `Highlight` swipe (twice max, hero + About). Everything else about the Apple-style rebuild — palette, Inter-only type, centered hero, borderless card grids, no margin column — stands as-is; `SectionGrid` and Bricolage/Jakarta are still gone.
+Register: a capable classmate, not a vendor. Warm and direct, never cutesy or salesy — the visual system changed, the voice didn't.
 Full spec in `docs/05-design-brief.md` — read it before writing any CSS.
 
-- **Typography:** Bricolage Grotesque (display) · Plus Jakarta Sans (body) · Caveat (margin notes only, max 4 on the page). All via `next/font/google`.
-- **Palette:** paper `#FAF5EB` · ink `#2A2724` · pen blue `#2F5D8A` · highlighter `#FFD75E`
-- **Highlighter appears exactly twice on the page.** Once in the hero, once in About. Nowhere else.
-- **Layout:** left-aligned, real left margin column (cols 3–11 at `lg`+) where the Caveat notes live. Services use a 7/5 asymmetric split, not a 3-up card grid. Mobile-first, 320px up.
-- **Cards:** 1px `--rule` border, no shadow, 6px radius. Elevation via `--paper-raised` on `--paper`.
-- **Signature motion:** highlighter swipe behind one hero word — `transform: scaleX()` from `transform-origin: left`, NOT a width animation (layout thrash on mid-range Android).
-- **Copy:** first person singular ("I", never "we"). Buttons name the outcome. Sentence case everywhere, never ALL CAPS.
-- **NO:** Inter/Roboto/Arial · purple-blue gradients · cream+serif+terracotta · paper textures or torn-edge graphics · star ratings or seller badges · decorative `01/02/03` markers · centered text stacks.
+- **Typography:** Inter for everything structural, via `next/font/google` (`--font-inter` feeds both `--font-display` and `--font-sans`; weight carries the display/body distinction — 800 hero, 600 headings, 400–500 body/buttons). Caveat (`--font-hand`) exists ONLY for the 4 `MarginNote` instances — never body, never UI, never buttons.
+- **Palette:** paper `#FFFFFF` · sunken/alternating band `#F5F5F7` · ink `#1D1D1F` · ink-soft `#707070` · electric blue (primary accent — CTAs, links, focus ring) `#0071E3` · marigold highlighter (rationed, twice max) `#FFD75E` · ember (functional state/validation only, never decorative) `#B64400` · hairline `#D6D6D6`.
+- **The highlighter appears exactly twice on the page.** Once behind "handled." in the hero, once behind "I'm a student too" in About. Nowhere else — a highlighter that marks everything marks nothing.
+- **`MarginNote` appears at most 4 times.** Hero caption, Services caption, About caption, Contact caption. Caveat, `-rotate-2`, `text-pen`, `aria-hidden="true"`. If a fifth shows up, delete one.
+- **Layout:** centered "Product Hero" (eyebrow → oversized headline with the highlighter → lead → pill CTAs → margin note), everything below it left-aligned in cards — not the old asymmetric left-margin column; margin notes render inline where they're used, not in a dedicated gutter. Services and Portfolio are card grids (`rounded-2xl`, borderless), not row lists. Mobile-first, 320px up.
+- **Cards:** borderless — no `border`, no shadow. Elevation is `--paper-raised` (white) sitting on `--paper-sunken` (`#F5F5F7`), or vice versa. Radius `--radius-2xl` (28px) on cards/portfolio images, `--radius` (10px) on inputs/panels/popovers, `rounded-full` (pill) on every button.
+- **Buttons:** always pill-shaped (`rounded-full`), regular weight (400) label — never semibold, never ALL CAPS.
+- **Copy:** first person singular ("I", never "we"). Buttons name the outcome. Sentence case everywhere.
+- **NO:** shadows or elevation on cards · a third accent color beyond electric blue + the rationed marigold (ember is functional/state-only) · border-radius below 10px on interactive elements · centered body paragraphs (only the hero centers) · serif display faces · Caveat anywhere but the 4 margin notes.
 
 ## Validation
 

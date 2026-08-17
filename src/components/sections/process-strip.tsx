@@ -1,9 +1,12 @@
 "use client";
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { MessageSquare, Receipt, Hammer, PackageCheck, type LucideIcon } from "lucide-react";
 
 import { processSteps } from "@/lib/constants";
 import { durationReveal, easeReveal, revealStagger } from "@/lib/motion";
+
+const STEP_ICONS: LucideIcon[] = [MessageSquare, Receipt, Hammer, PackageCheck];
 
 // Visibility is driven by the container, never by the rules themselves: a rule
 // sitting at scale 0 has zero area, so IntersectionObserver would never satisfy
@@ -49,40 +52,40 @@ export function ProcessStrip({ heading }: { heading: string }) {
   const stepMotion = reduceMotion ? {} : { variants: stepRise };
 
   return (
-    <div className="mt-8">
-      <h3 className="font-display text-xl font-bold text-ink">{heading}</h3>
+    <div className="mt-8 text-center">
+      <h3 className="font-display text-xl font-semibold text-ink">{heading}</h3>
 
-      <Wrapper className="relative mt-6 pl-6 lg:pt-6 lg:pl-0" {...wrapperMotion}>
-        {/* Horizontal at lg+, vertical below — each drawing from the edge the
-            reader starts at. Only one is ever displayed. */}
+      <Wrapper className="relative mt-10" {...wrapperMotion}>
+        {/* The connecting rule sits behind the row of icon badges, at their
+            vertical center — a single line the four steps sit on top of. */}
         <Rule
           aria-hidden="true"
-          className="absolute inset-x-0 top-0 hidden h-px origin-left bg-pen lg:block"
-          {...ruleMotion}
-        />
-        <Rule
-          aria-hidden="true"
-          className="absolute top-0 bottom-0 left-0 w-px origin-top bg-pen lg:hidden"
+          className="absolute inset-x-0 top-[1.375rem] hidden h-px origin-left bg-pen lg:block"
           {...ruleMotion}
         />
 
-        <ol className="grid gap-6 lg:grid-cols-4">
-          {processSteps.map((step, index) => (
-            <Step key={step.label} className="relative" {...stepMotion}>
-              {/* The tick crossing the rule: horizontal on mobile, vertical at lg+. */}
-              <span
-                aria-hidden="true"
-                className="absolute -left-6 top-[0.55em] h-px w-3 bg-pen lg:top-auto lg:left-0 lg:-mt-6 lg:h-3 lg:w-px"
-              />
-              <span className="font-display text-sm font-bold tabular-nums text-pen">
-                {index + 1}
-              </span>
-              <p className="mt-1 font-sans text-base font-semibold text-ink">{step.label}</p>
-              <p className="mt-1 max-w-[38ch] text-sm leading-relaxed text-ink-soft">
-                {step.detail}
-              </p>
-            </Step>
-          ))}
+        <ol className="grid gap-8 lg:grid-cols-4">
+          {processSteps.map((step, index) => {
+            const Icon = STEP_ICONS[index];
+            return (
+              <Step
+                key={step.label}
+                className="relative flex flex-col items-center"
+                {...stepMotion}
+              >
+                <span className="relative z-10 flex size-11 items-center justify-center rounded-full border border-pen bg-paper text-pen">
+                  <Icon className="size-4" aria-hidden="true" />
+                </span>
+                <span className="mt-3 font-display text-xs font-bold tabular-nums text-pen">
+                  Step {index + 1}
+                </span>
+                <p className="mt-1 font-sans text-base font-semibold text-ink">{step.label}</p>
+                <p className="mt-1 max-w-[32ch] text-sm leading-relaxed text-ink-soft">
+                  {step.detail}
+                </p>
+              </Step>
+            );
+          })}
         </ol>
       </Wrapper>
     </div>

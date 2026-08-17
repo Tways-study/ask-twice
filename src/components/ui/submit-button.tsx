@@ -33,7 +33,7 @@ export function SubmitButton({ status }: { status: SubmitStatus }) {
       animate={status === "error" && !reduceMotion ? { x: [0, -4, 4, -4, 4, 0] } : { x: 0 }}
       transition={{ duration: 0.32 }}
       className={cn(
-        "inline-flex h-11 w-full min-w-[11.5rem] items-center justify-center gap-2 rounded-lg border border-transparent font-sans text-base font-semibold text-paper transition-colors disabled:cursor-not-allowed sm:w-auto",
+        "inline-flex h-11 w-full min-w-[11.5rem] items-center justify-center gap-2 rounded-full border border-transparent font-sans text-base font-normal text-paper transition-colors disabled:cursor-not-allowed sm:w-auto",
         STATUS_FILL[status]
       )}
     >

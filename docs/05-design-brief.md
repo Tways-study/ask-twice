@@ -1,150 +1,159 @@
-> **Project:** AskTwice · **Doc:** Design Brief · **Version:** 0.2 · **Date:** 2026-08-14
-> **Status:** Draft — supersedes v0.1 ("quiet competence")
+> **Project:** AskTwice · **Doc:** Design Brief · **Version:** 0.4 · **Date:** 2026-08-17
+> **Status:** Current — supersedes v0.3 ("Cathedral," a full Marginalia replacement) by reintroducing two of its signature personal touches
 > **Upstream:** PRD v0.1, App Flow v0.1
+> **Source:** structure/type/color adapted from the "Apple (España)" style at styles.refero.design/style/c9cabb96-32fa-4896-837a-f2497ce1c856; two accents carried forward from v0.2 ("Marginalia")
 
 # AskTwice — Design Brief
 
 ## 1. Direction
 
-**"Marginalia"** — the visual language of a good student's annotated notebook: warm paper, graphite ink, pen-blue notes in the margin, and a highlighter used exactly where it matters. Clean modern layout underneath; the handwriting is an accent, never the structure.
+**"Cathedral, annotated"** — the v0.3 replacement's near-white monochrome canvas, oversized weight-800 headlines, electric-blue accent, and borderless card grids, with two of the original "Marginalia" build's personal touches layered back in: handwritten `MarginNote` asides and the marigold `Highlight` swipe. Everything else about the Apple-style rebuild stands as-is.
 
-**Why this and not something else.** The person landing on this page is a college student with a deadline, deciding whether to trust a stranger with their grade. Two things have to be true at once: *this person is organized* and *this person is one of us, and easy to talk to.* A corporate-clean layout only delivers the first. Paper, pen-blue annotation, and a highlighter stroke are artifacts from the visitor's own daily life — they deliver the second without costing the first, because the underlying grid, type scale, and spacing stay disciplined.
+**Why bring anything back.** A pure copy of the reference's own architecture reads as exactly that — a copy, not a person. The two touches that come back are specifically the ones that carried Twice's individual voice rather than generic page furniture: a note that looks like it was jotted by hand, and a highlighter mark that looks like it was actually dragged across the page. Both are deliberately rationed (same rules as v0.2) so they read as accents, not a second design system fighting the first.
 
-The register is a capable classmate, not a vendor. Warm, direct, unpretentious. Never cutesy, never salesy.
+**What's back, and where:**
+- **`MarginNote`** (Caveat, `-rotate-2`, `text-pen`) — exactly 4 places: the caption under the hero CTAs, under "What I take on," the phrase under About's second paragraph, and under Contact's lead. Same "4 max, or delete one" rule as v0.2.
+- **`Highlight`** (marigold swipe, `bg-highlight`) — exactly twice: "handled." in the hero, "I'm a student too" in About. Same "twice, maximum" rule as v0.2. It fires off the hero's masked-line reveal completing, not a scroll trigger, so the two stay in sync.
+- The `opengraph-image` and `icon.svg` were updated to match — the OG card shows the same marigold swipe as the live hero, and the favicon carries a small highlighter-behind-text motif again (recolored: white background, ink-black bars, not the old warm paper).
+
+**What did NOT come back** (still v0.3, not v0.2):
+- The warm paper / pen-blue / cream palette — canvas is still near-white, ink is still `#1D1D1F`, the one interactive/brand color is still electric blue.
+- Bricolage Grotesque and Plus Jakarta Sans — display and body copy are still one Inter family across the page. Caveat is back, but strictly for the 4 margin notes.
+- The left-margin asymmetric grid — Services and Portfolio are still card grids, the hero is still centered, margin notes render inline in normal content flow rather than in a dedicated left gutter.
+- Card borders and shadows — cards are still borderless, separated by background-color alternation only.
+
+The register is unchanged throughout every version: a capable classmate, not a vendor. Warm, direct, unpretentious. Never cutesy, never salesy.
 
 ---
 
 ## 2. Typography
 
-Three faces. No serif display — the warmth comes from letterform character and the handwriting accent, not from a high-contrast serif, which is the reflexive choice for "warm" and lands as generic.
+Two faces. Inter carries every structural role; Caveat exists solely for the 4 margin notes.
 
-| Role | Face | Weights | Used for |
+| Role | Face | Weight | Used for |
 |---|---|---|---|
-| **Display** | **Bricolage Grotesque** | 500, 700, 800 | Hero headline, section headings, service names, pricing figures |
-| **Body** | **Plus Jakarta Sans** | 400, 500, 600 | All body copy, form labels, buttons, nav, FAQ |
-| **Marginalia** | **Caveat** | 500 | Margin notes ONLY. Never in UI, never body, never buttons. |
+| **Display** | Inter | 800 | Hero headline only |
+| **Heading** | Inter | 600 | Section headings, card titles, service/portfolio names |
+| **Body** | Inter | 400–500 | All body copy, nav, FAQ answers |
+| **Button** | Inter | 400 | Button labels — regular weight, per the reference; never semibold |
+| **Marginalia** | Caveat | 500 | The 4 `MarginNote` asides ONLY. Never in UI, never body, never buttons. |
 
-All three load from `next/font/google` — no manual `@font-face` setup, no layout shift, no external request at runtime.
+Inter loads once via `next/font/google` as a single variable feeding both `--font-display` and `--font-sans` — weight is what separates "hero headline" from "form label," not a font swap. This mirrors the reference's own fallback: it specifies SF Pro Display/Text, which aren't distributable web fonts, and documents Inter as the substitute for both. Caveat loads separately as `--font-hand`, used only by `MarginNote`.
 
-**Why Bricolage Grotesque:** its letterforms are slightly irregular and its variable width and optical-size axes let headlines feel drawn rather than set. It reads as human without reading as informal. Paired with a sans body, the size contrast — not style contrast — carries the hierarchy, which is deliberate: serif-display-on-cream is the single most recognizable "designed by AI" signature right now, and this brief needs to not look like that.
+All weights/faces load from `next/font/google` — no manual `@font-face`, no layout shift.
 
-**Why Caveat, and the rule that keeps it from being twee:** Caveat is legible, unfussy handwriting — no loops, no marker gimmick. It appears **at most 4 times on the entire page**, always in the left gutter (or above the heading on mobile), always at `--text-sm`, always in `--pen`, rotated −2°. If a fifth one shows up, delete one.
-
-**Scale (fluid):**
+**Scale (fluid, retargeted to the reference's px scale):**
 
 ```css
---font-display: 'Bricolage Grotesque', system-ui, sans-serif;
---font-body:    'Plus Jakarta Sans', system-ui, sans-serif;
---font-hand:    'Caveat', cursive;
+--font-display: var(--font-inter);
+--font-sans:    var(--font-inter);
 
---text-xs:   clamp(0.75rem,   0.72rem + 0.15vw, 0.8125rem);  /* 12–13 · tags, meta */
---text-sm:   clamp(0.8125rem, 0.79rem + 0.20vw, 0.9375rem);  /* 13–15 · captions, marginalia */
---text-base: clamp(0.9375rem, 0.90rem + 0.25vw, 1.0625rem);  /* 15–17 · body */
---text-lg:   clamp(1.125rem,  1.05rem + 0.40vw, 1.3125rem);  /* 18–21 · lead paragraph */
---text-xl:   clamp(1.375rem,  1.20rem + 0.70vw, 1.75rem);    /* 22–28 · card titles */
---text-2xl:  clamp(1.875rem,  1.55rem + 1.30vw, 2.625rem);   /* 30–42 · section headings */
---text-3xl:  clamp(2.5rem,    1.90rem + 2.60vw, 4rem);       /* 40–64 · hero */
+--text-xs:   clamp(0.6875rem, 0.6875rem + 0.08vw, 0.75rem);   /* 11–12 · micro, meta */
+--text-sm:   clamp(0.8125rem, 0.8125rem + 0.08vw, 0.875rem);  /* 13–14 · captions */
+--text-base: clamp(0.9375rem, 0.9375rem + 0.16vw, 1.0625rem); /* 15–17 · body */
+--text-lg:   clamp(1.125rem,  1.125rem + 0.23vw, 1.3125rem);  /* 18–21 · lead paragraph */
+--text-xl:   clamp(1.375rem,  1.375rem + 0.47vw, 1.75rem);    /* 22–28 · card titles */
+--text-2xl:  clamp(1.5rem,    1.5rem + 0.63vw, 2rem);         /* 24–32 · section headings */
+--text-3xl:  clamp(2.5rem,    2.5rem + 4.4vw, 6rem);          /* 40–96 · hero display */
 ```
 
 **Usage rules**
 
-- Hero: Bricolage 800, `--text-3xl`, tracking `-0.03em`, line-height `1.02`
-- Section headings: Bricolage 700, `--text-2xl`, tracking `-0.02em`
-- Body: Plus Jakarta 400, `--text-base`, line-height `1.65`, max width `65ch`
-- Pricing: Bricolage 700 with `font-variant-numeric: tabular-nums` so ₱ figures align down a column
-- Buttons: Plus Jakarta 600, `--text-base`, sentence case — **never ALL CAPS**; shouting is the opposite of this brief
-- Form labels: Plus Jakarta 500, `--text-sm`, sentence case, `--ink-soft`
+- Hero: Inter 800, `--text-3xl`, tracking `-0.03em`, line-height `1.04`, centered
+- Section headings: Inter 600, `--text-2xl`, tracking `-0.01em`, left-aligned
+- Body: Inter 400, `--text-base`, line-height `1.65`, max width `65ch`
+- Pricing: Inter 600 with `font-variant-numeric: tabular-nums` so ₱ figures align down a column
+- Buttons: Inter 400, `--text-base`, sentence case — **never ALL CAPS**
+- Form labels: Inter 500, `--text-sm`, sentence case, `--ink-soft`
 
 ---
 
 ## 3. Colour
 
-Warm paper, graphite ink, one pen, one highlighter. That is the entire system, and it comes from the subject rather than from a palette generator.
+Near-white canvas, ink-black text, one electric-blue accent. Color appears nowhere else as decoration — the reference's own rule ("let the product carry the color") translates here to "let weight and whitespace carry the hierarchy."
 
 ```css
 :root {
-  /* Paper */
-  --paper:          #FAF5EB;  /* dominant surface — warm and saturated enough to read as paper */
-  --paper-sunken:   #F2E9D9;  /* alternating sections, quiet blocks */
-  --paper-raised:   #FFFDF8;  /* cards, form fields — lifts off the page */
-  --paper-inverse:  #2A2724;  /* footer, and the one dark section */
+  /* Canvas */
+  --paper:          #FFFFFF;  /* primary page background, card surfaces */
+  --paper-sunken:   #F5F5F7;  /* alternating section bands */
+  --paper-raised:   #FFFFFF;  /* cards, form fields — same as paper; separation is via --paper-sunken */
+  --paper-inverse:  #1D1D1F;  /* the one dark section — Contact + Footer */
 
-  /* Graphite */
-  --ink:            #2A2724;  /* primary text */
-  --ink-soft:       #6B635A;  /* secondary text, labels, captions */
-  --ink-faint:      #A79C8D;  /* placeholders and disabled ONLY */
-  --ink-inverse:    #FAF5EB;  /* text on dark */
+  /* Ink */
+  --ink:            #1D1D1F;  /* primary text */
+  --ink-soft:       #707070;  /* secondary text, labels, captions */
+  --ink-faint:      #86868B;  /* placeholders and disabled ONLY */
+  --ink-inverse:    #FFFFFF;  /* text on dark */
 
-  /* Rules */
-  --rule:           #E5DAC7;  /* hairlines, card borders */
-  --rule-strong:    #C9B99E;  /* hover borders, active field borders */
+  /* Hairline — used sparingly, per the reference's own "rarely used" note */
+  --rule:           #D6D6D6;
+  --rule-strong:    #B6B6B6;
 
-  /* Pen — the interactive colour */
-  --pen:            #2F5D8A;  /* links, CTAs, marginalia, focus ring */
-  --pen-deep:       #1E4266;  /* hover / pressed */
-  --pen-wash:       #E4EDF6;  /* selected states, quiet badges */
+  /* Electric Blue — the one chromatic accent */
+  --pen:            #0071E3;  /* filled CTAs, links, focus ring, emphasized words */
+  --pen-deep:       #0058B0;  /* hover / pressed */
+  --pen-wash:       #E8E8ED;  /* selected states, quiet badges, text selection */
 
-  /* Highlighter — meaning, not decoration */
-  --highlight:      #FFD75E;  /* the swipe behind key words */
-  --highlight-soft: #FFF2C4;  /* badge / tag backgrounds */
+  /* Highlighter — the one personal touch carried over from v0.2. Distinct
+     from --error/--error-wash below, which stay their own ember tone. */
+  --highlight:      #FFD75E;
+  --highlight-soft: #FFF2C4;
 
-  /* States */
-  --ok:             #3D6B4F;
-  --error:          #B4402F;
-  --error-wash:     #FBEDEA;
+  /* States (kept independent of the highlighter) */
+  --ok:             #2F6B46;
+  --error:          #B64400;
+  --error-wash:     #FBE6D8;
 }
 ```
 
-**Contrast** (against `--paper` `#FAF5EB` unless noted)
+**Contrast** (against `--paper` `#FFFFFF` unless noted)
 
 | Pair | Ratio | Verdict |
 |---|---|---|
-| `--ink` on `--paper` | ~12.9:1 | AAA ✅ |
-| `--ink-soft` on `--paper` | ~4.9:1 | AA body ✅ |
-| `--pen` on `--paper` | ~6.4:1 | AA body ✅ |
-| `--paper` on `--pen` (filled button) | ~6.4:1 | AA body ✅ |
-| `--ink` on `--highlight` | ~9.1:1 | AAA ✅ |
-| `--ink-inverse` on `--paper-inverse` | ~12.9:1 | AAA ✅ |
-| `--ink-faint` on `--paper` | ~2.9:1 | ⚠️ placeholders/disabled only — never real content |
+| `--ink` on `--paper` | ~17.9:1 | AAA ✅ |
+| `--ink-soft` on `--paper` | ~4.6:1 | AA body ✅ |
+| `--pen` on `--paper` | ~4.6:1 | AA body ✅ |
+| `--paper` on `--pen` (filled button) | ~4.6:1 | AA body ✅ |
+| `--ink-inverse` on `--paper-inverse` | ~17.5:1 | AAA ✅ |
+| `--ink-faint` on `--paper` | ~3.3:1 | ⚠️ placeholders/disabled only — never real content |
 
-**The highlighter rule.** `--highlight` appears **twice on the page, maximum**: once behind one word in the hero, once behind one phrase in About. Everywhere else that needs emphasis uses weight or `--pen`. A highlighter that marks everything marks nothing — true on paper, true here.
-
-**Why not the obvious alternatives:** cream-plus-terracotta is the current default "warm" palette and reads as templated. Pastel-and-rounded reads as a study app for children. Pen-blue on paper is specific to the subject, passes contrast comfortably, and leaves one genuinely bright accent (marigold) that stays meaningful because it is rationed.
+**The accent rule.** `--pen` (electric blue) is the primary chromatic color — filled buttons, links, focus rings. `--highlight` (marigold) is the one deliberate exception: the swipe behind exactly two words on the whole page (§5). `--error` (ember) is functional-only and never decorative. Three colors, each with exactly one job — nothing is chromatic just to be chromatic.
 
 ---
 
 ## 4. Layout
 
-**Grid:** 12 columns, max content width **1180px**, gutters `clamp(1.25rem, 5vw, 5rem)`.
+**Grid:** content max-width **1200px**, gutters `clamp(1.25rem, 5vw, 5rem)`.
 
-**The margin column is real.** From `lg` up, content sits in columns 3–11, leaving a genuine left margin where the Caveat notes live. This is why the layout is not centered — the margin is structural, not leftover. Below `lg`, marginalia moves above its heading and the layout becomes a single full-width column.
+**The hero is centered; everything else is left-aligned.** This is the reference's own pattern (Product Hero centers; Section Headers and Feature Showcase Cards are left-aligned) and it's why there's no more margin column — centering is reserved for the one "Product Hero" moment, not the whole page.
 
 ```
-DESKTOP (≥1024px)                        MOBILE (<1024px)
-┌──────┬───────────────────────────┐     ┌────────────────────┐
-│  ↖   │  Section heading          │     │ ↖ note             │
-│ note │  Body copy, cards, form   │     │ Section heading    │
-│      │                           │     │ Body, cards        │
-└──────┴───────────────────────────┘     └────────────────────┘
-  2 col            9 col
+HERO (centered)                          OTHER SECTIONS (left-aligned)
+┌─────────────────────────┐              ┌─────────────────────────┐
+│        eyebrow           │              │ Section heading          │
+│   Big centered headline  │              │ ┌────────┐ ┌────────┐    │
+│   Lead, centered         │              │ │  card  │ │  card  │    │
+│  [CTA] [CTA]  · caption  │              │ └────────┘ └────────┘    │
+└─────────────────────────┘              └─────────────────────────┘
 ```
 
-**Spacing scale** — use these values only. Arbitrary padding is the visual equivalent of inconsistent indentation.
+**Spacing scale** — retargeted to the reference's own spacing list (4/8/12/16/24/32/44/76/120/144):
 
 ```css
 --space-1: 0.25rem;  --space-2: 0.5rem;   --space-3: 0.75rem;
 --space-4: 1rem;     --space-5: 1.5rem;   --space-6: 2rem;
---space-7: 3rem;     --space-8: 4rem;     --space-9: 6rem;   --space-10: 8rem;
+--space-7: 2.75rem;  --space-8: 4.75rem;  --space-9: 7.5rem;  --space-10: 9rem;
 ```
 
-**Section rhythm:** alternate `--paper` → `--paper-sunken` → `--paper`. Vertical padding `--space-9` desktop, `--space-8` mobile. Contact is the one dark block (`--paper-inverse`) — it arrives as the destination the whole page has been walking toward.
+**Section rhythm:** alternate `--paper` → `--paper-sunken` → `--paper`. Vertical padding `--space-9` (120px) desktop, `--space-8` (76px) mobile — matches the reference's own stated 100–120px section-gap range. Contact is the one dark block (`--paper-inverse`), same as before.
 
 **Composition rules**
 
-- **Left-aligned everything.** A centered stack is the shape a layout takes when nobody chose one.
-- **Services are asymmetric.** On desktop, a 7/5 split — description column wider than the price/CTA column. Not a 3-up grid of equal cards.
-- **Cards get a 1px `--rule` border and no shadow.** Elevation comes from `--paper-raised` sitting on `--paper`, which is how stacked paper actually behaves.
-- **Radius:** `6px` on cards and inputs, `999px` on tags only. Nothing else fully rounded — over-rounding is where "professional" leaks out.
+- **Hero centers; every other section is left-aligned.** A centered body paragraph anywhere else is the shape a layout takes when nobody chose one (the reference's own "don't center body paragraphs" rule).
+- **Services and Portfolio are card grids**, not row lists — `rounded-2xl` (28px), borderless, sitting on the alternating canvas.
+- **Cards are borderless.** No `border`, no shadow. Elevation is `--paper-raised` (white) against `--paper-sunken` (`#F5F5F7`) — color contrast alone, per the reference's "rely on background-color alternation and radii, not borders or shadow."
+- **Radius:** `--radius` (10px, the reference's "links" token) on inputs/panels/popovers. `--radius-2xl` (28px, the reference's "cards"/"productImages" token) on cards and portfolio thumbnails. `rounded-full` (980px pill) on every button.
 
 **Breakpoints:** `sm 640` · `md 768` · `lg 1024` · `xl 1280`. Mobile-first; base styles are the 320px case.
 
@@ -161,13 +170,15 @@ DESKTOP (≥1024px)                        MOBILE (<1024px)
 | Mobile drawer | 300ms | `cubic-bezier(0.32, 0.72, 0, 1)` |
 | Form success transition | 320ms | `ease-out` |
 
-### Signature interaction — the highlighter swipe
+### Signature moment — the highlighter swipe
 
-On hero load, after the headline settles (~500ms), a marigold bar wipes left-to-right behind one word over **380ms**, easing `cubic-bezier(0.65, 0, 0.35, 1)`. It sits *behind* the text (`z-index: -1`), height ~`0.62em`, anchored near the baseline, overshooting the word by ~4px on each side, with slightly uneven edges — the way real highlighter ink lays down.
+Back from v0.2, unchanged in mechanics. On hero load, after the headline's masked-line reveal completes, a marigold bar wipes left-to-right behind "handled." over 380ms, `cubic-bezier(0.65, 0, 0.35, 1)`. It sits *behind* the text (`z-index: -1`), height ~`0.62em`, anchored near the baseline, with slightly uneven edges via `clip-path` — the way real highlighter ink lays down. It's chained off the headline animation's `onAnimationComplete`, not a hardcoded delay, so it stays in sync if the copy changes length.
 
-**Implementation note:** build it as an absolutely-positioned span animated with `transform: scaleX()` from `transform-origin: left`, **not** a width animation. Width animations trigger layout on every frame and will judder on the mid-range Android phones most of this audience is holding.
+About's highlighter (`I'm a student too`) fires on scroll-into-view instead, since it isn't part of a chained entrance sequence.
 
-This is the one bold moment on the page. Everything else stays quiet.
+**Implementation note:** built as an absolutely-positioned span animated with `transform: scaleX()` from `transform-origin: left`, **not** a width animation — width animations trigger layout on every frame and judder on mid-range Android.
+
+This is the one bold moment on the page, exactly as it was in v0.2. Everything else — including the rest of this Apple-derived system — stays quiet.
 
 **Reduced motion:** all durations → 0, stagger → 0, scroll reveals render visible immediately, and the highlighter renders in its final state with no wipe. Not optional.
 
@@ -178,18 +189,18 @@ This is the one bold moment on the page. Everything else stays quiet.
 | Component | Section | Variants | States | Notes |
 |---|---|---|---|---|
 | `StickyNav` | global | transparent, condensed | default, drawer-open | shadcn `Sheet` for mobile |
-| `MarginNote` | 4 places max | — | — | Caveat, `--pen`, rotate −2°, moves above heading below `lg` |
-| `Highlight` | hero, about | animated, static | — | The signature; respects reduced-motion |
-| `Hero` | top | — | — | Headline, lead, dual CTA |
-| `ServiceRow` | services | — | default, hover | 7/5 asymmetric split, tabular pricing |
-| `PriceTag` | services | range, "ask me" | — | Bricolage 700, `tabular-nums` |
-| `WorkCard` | portfolio | filled, **placeholder** | default, hover | Placeholder is a designed state, not a gap |
-| `FaqItem` | faq | — | collapsed, expanded | shadcn `Accordion` |
-| `ContactForm` | contact | — | idle, submitting, success, error | On `--paper-inverse`; fields are `--paper-raised` |
-| `Field` | form | text, textarea, select, date | default, focus, error, disabled | Error text `--error`, `aria-live="polite"` |
-| `SubmitButton` | form | — | idle, loading, disabled, done | Label changes idle→loading→done, never a generic "Submit" |
+| `MarginNote` | 4 places max | — | — | Caveat, `--pen`, rotate −2°. Renders inline where it's used (no margin column) |
+| `Highlight` | hero, about | externally-controlled, scroll-triggered | — | The signature; respects reduced-motion |
+| `Hero` | top | — | — | Centered: eyebrow, headline (with `Highlight`), lead, dual pill CTA, `MarginNote` |
+| `ServiceCard` | services | — | default | `rounded-2xl` card grid, tabular pricing, pill CTA |
+| `WorkCard` | portfolio | filled, **placeholder** | default | Card grid; placeholder is a designed state, not a gap |
+| `FaqItem` | faq | — | collapsed, expanded | shadcn `Accordion`, electric-blue trigger when open |
+| `ContactForm` | contact | — | idle, submitting, success, error | On `--paper-inverse`; fields are `--paper-raised` (white) |
+| `Field` | form | text, textarea, select, date | default, focus, error, disabled | Error text `--error` (ember), `aria-live="polite"` |
+| `SubmitButton` | form | — | idle, loading, disabled, done | Pill, regular weight; label changes idle→loading→done |
 | `Toast` | form | success, error | — | shadcn `Sonner` |
 | `Footer` | bottom | — | — | `--paper-inverse`, email, socials |
+| `AskPanel` | global corner | — | closed, open | Launcher deliberately stays a squared tab (`--radius`, not pill) — the one intentional break from the pill convention, so it doesn't read as a generic chat FAB |
 
 ---
 
@@ -199,25 +210,26 @@ This is the one bold moment on the page. Everything else stays quiet.
 - **Focus:** 2px `--pen` ring, 2px offset, on every interactive element. Never `outline: none` without a replacement.
 - **Targets:** ≥44×44px on all tappable elements, including FAQ triggers and nav links.
 - **Keyboard:** full tab path nav → sections → form → submit. Accordion on Enter/Space. Drawer closes on Escape.
-- **Semantics:** one `h1` (hero), one `h2` per section, `h3` per card. Marginalia is `aria-hidden="true"` — it is atmosphere, and a screen reader announcing a rotated aside mid-heading is noise.
-- **Highlighter is decorative.** It never carries meaning alone; the highlighted word is already load-bearing in the sentence.
+- **Semantics:** one `h1` (hero), one `h2` per section, `h3` per card. `MarginNote` is `aria-hidden="true"` — it is atmosphere, and a screen reader announcing a rotated aside mid-flow is noise.
+- **The highlighter is decorative.** It never carries meaning alone; the highlighted word is already load-bearing in the sentence.
 - `prefers-reduced-motion` honoured throughout (§5).
 
 ---
 
 ## 8. Anti-goals
 
-- **Not a SaaS landing page.** No gradient mesh, no floating dashboard screenshot, no "Trusted by 500+ students" counter, no three equal icon-cards.
+- **Not a SaaS landing page.** No gradient mesh, no floating dashboard screenshot, no "Trusted by 500+ students" counter.
 - **Not a freelancer-marketplace clone.** No star ratings, no seller badges, no countdown urgency.
-- **Not a scrapbook.** No paper textures, no torn edges, no tape graphics, no fake ruled lines, no sticker emoji. The paper feeling comes from colour and restraint only — the moment a texture image appears, this becomes a Canva template.
-- **Not cutesy.** Approachable ≠ childish. No mascots, no rounded-everything, no stacked exclamation marks.
-- **Not the AI default.** No Inter/Roboto/Arial, no purple-blue gradient, no cream-plus-serif-plus-terracotta, no decorative `01 / 02 / 03` markers on content that is not a sequence.
+- **Not decorated beyond the two rationed touches.** No paper textures, no torn edges, no tape graphics, no sticker emoji, no third accent color, no decorative `01/02/03` markers on content that isn't a sequence. The highlighter and margin notes are exceptions because they're capped (§1) — everything else stays quiet.
+- **Not cutesy.** Approachable ≠ childish. No mascots, no stacked exclamation marks.
+- **Not shadowed or bordered.** Cards get zero shadow and no visible stroke — the v0.2 "1px rule border" rule is gone along with the rest of Marginalia. Separation is background-color alternation only.
+- **Not centered everywhere.** Only the hero centers. A centered body paragraph anywhere else is a mistake, not a style.
 
 ---
 
 ## 9. Voice, and the copy placeholders
 
-**Voice rules**
+**Voice rules (unchanged from v0.2 — the visual system changed, the voice didn't)**
 
 - **First person singular.** This is *Twice*, not "our team." "I'll get back to you within a day," never "We aim to respond promptly."
 - **Say the thing plainly.** "₱300–₱1,500" beats "affordable rates." "Two revisions included" beats "we value your satisfaction."
@@ -227,11 +239,11 @@ This is the one bold moment on the page. Everything else stays quiet.
 
 ### Hero
 
-- **Headline:** `Schoolwork,` **`handled`**`.` — highlighter on *handled*
-- Alternatives if that doesn't land: *"Good work. On time. No stress."* · *"You've got a deadline. I've got this."*
+- **Eyebrow:** "For students, by a student"
+- **Headline:** `Schoolwork,` **`handled.`** — marigold highlighter swipe behind "handled."
 - **Lead:** "Presentations, case studies, capstone documents, and the assignments piling up behind them. Tell me what you need and when — I'll tell you what it costs."
 - **Primary CTA:** `Tell me about your project` · **Secondary:** `See what I charge`
-- **Margin note:** *"no commitment — ask first, decide after"*
+- **Margin note under the CTAs:** "No commitment — ask first, decide after."
 
 ### Services — `[[TBD: replace every figure with a real range]]`
 
@@ -244,7 +256,7 @@ This is the one bold moment on the page. Everything else stays quiet.
 | Research papers | "Literature review through methodology, formatted to APA, IEEE, or whatever your department uses." | ₱800–₱2,500 |
 | Something else | "Not on the list? Describe it and I'll quote it." | Ask me |
 
-**Margin note:** *"rush jobs cost more — but I'll always tell you first"*
+**Margin note:** "Rush jobs cost more — but I'll always tell you first."
 
 ### Portfolio
 
@@ -258,8 +270,8 @@ When real content exists, aim for 2–3 presentation screenshots, 1–2 case-stu
 
 - Structure: who you are (medical laboratory science → developer → this) · what you actually do all day (3rd-year BSIT, building your own capstone) · why this exists.
 - Suggested opener: "I'm Twice. I'm a third-year IT student now — I started out in Medical Laboratory Science before shifting — and I've spent the last two years building software and writing documentation since."
-- Highlighter goes on one phrase here — suggest **"I'm a student too"** or **"I've been on your side of this."**
-- **Margin note:** *"same deadlines as you, honestly"*
+- The highlighter's second and last appearance goes on one phrase here — **"I'm a student too"**.
+- **Margin note below:** "Same deadlines as you, honestly."
 
 ### FAQ
 
@@ -276,7 +288,7 @@ Write the answers in Twice's voice, not a policy voice.
 
 - **Heading:** "Tell me what you need."
 - **Lead:** "The more detail you give me, the faster I can quote it. Nothing here is a commitment."
+- **Margin note below the lead:** "I read every one of these myself."
 - **Submit:** idle `Send my request` → loading `Sending…` → done `Sent`
 - **Success:** "Got it — I'll reply to `{email}` within a day."
 - **Failure:** "That didn't send. Email me directly at `[[TBD: email]]` and I'll pick it up there."
-- **Margin note:** *"I read every one of these myself"*

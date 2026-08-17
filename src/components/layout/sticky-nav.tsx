@@ -15,6 +15,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Container } from "@/components/layout/container";
+import { Logomark } from "@/components/layout/logomark";
 
 const SECTION_IDS = navLinks.map((link) => link.href.replace("#", ""));
 
@@ -35,8 +36,8 @@ export function StickyNav() {
   const borderAlpha = useTransform(scrollY, CONDENSE_RANGE, [0, 1]);
   const blurPx = useTransform(scrollY, CONDENSE_RANGE, [0, 8]);
 
-  const background = useMotionTemplate`rgba(250, 245, 235, ${bgAlpha})`;
-  const borderColor = useMotionTemplate`rgba(229, 218, 199, ${borderAlpha})`;
+  const background = useMotionTemplate`rgba(255, 255, 255, ${bgAlpha})`;
+  const borderColor = useMotionTemplate`rgba(214, 214, 214, ${borderAlpha})`;
   const backdropFilter = useMotionTemplate`blur(${blurPx}px)`;
 
   useEffect(() => {
@@ -60,9 +61,10 @@ export function StickyNav() {
           className="flex items-center justify-between"
           style={reduceMotion ? { height: 64 } : { height: navHeight }}
         >
-          <a href="#" className="flex h-11 items-center">
+          <a href="#" className="flex h-11 items-center gap-2 text-ink">
+            <Logomark className="size-5 shrink-0" />
             <motion.span
-              className="font-display font-bold text-ink"
+              className="font-display font-bold"
               style={reduceMotion ? { fontSize: 18 } : { fontSize: wordmarkSize }}
             >
               {siteConfig.name}

@@ -1,22 +1,21 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Plus_Jakarta_Sans, Caveat } from "next/font/google";
+import { Inter, Caveat } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { AskPanel } from "@/components/layout/ask-panel";
 import { siteConfig } from "@/lib/constants";
 import "./globals.css";
 
-const bricolage = Bricolage_Grotesque({
-  variable: "--font-display",
+// One family for both roles, per the Apple-style reference's own documented
+// SF Pro Display / SF Pro Text fallback: Inter. Weight alone carries the
+// display/body distinction — 700/800 for headlines, 400/500/600 for body.
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["500", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const plusJakarta = Plus_Jakarta_Sans({
-  variable: "--font-body",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
-
+// The one personal touch carried over from the original build: margin notes
+// only, never body or UI (docs/05-design-brief.md §2).
 const caveat = Caveat({
   variable: "--font-hand",
   subsets: ["latin"],
@@ -47,7 +46,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${bricolage.variable} ${plusJakarta.variable} ${caveat.variable} scroll-smooth antialiased`}
+      className={`${inter.variable} ${caveat.variable} scroll-smooth antialiased`}
     >
       <body className="bg-paper text-ink">
         {children}

@@ -1,88 +1,74 @@
 "use client";
 
-import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import {
+  Presentation,
+  FileSearch,
+  GraduationCap,
+  Code2,
+  NotebookPen,
+  Microscope,
+  Sparkles,
+  type LucideIcon,
+} from "lucide-react";
 
 import { copy, services } from "@/lib/constants";
+import { type ServiceType } from "@/lib/schemas";
 import { SectionWrapper } from "@/components/layout/section-wrapper";
-import { SectionGrid } from "@/components/layout/section-grid";
-import { MarginNote } from "@/components/layout/margin-note";
 import { Reveal } from "@/components/layout/reveal";
+import { MarginNote } from "@/components/layout/margin-note";
 import { Button } from "@/components/ui/button";
 
-function PriceTag({ priceRange, hovered }: { priceRange: string; hovered: boolean }) {
-  const reduceMotion = useReducedMotion();
+// One glyph per service — a quiet visual anchor for each card, not decoration.
+const SERVICE_ICONS: Record<ServiceType, LucideIcon> = {
+  presentation: Presentation,
+  case_study: FileSearch,
+  capstone: GraduationCap,
+  development: Code2,
+  homework: NotebookPen,
+  research_paper: Microscope,
+  other: Sparkles,
+};
 
-  return (
-    <motion.span
-      animate={{ x: reduceMotion ? 0 : hovered ? -2 : 0 }}
-      transition={{ duration: reduceMotion ? 0 : 0.14, ease: "easeOut" }}
-      className="whitespace-nowrap font-display text-xl font-bold tabular-nums text-ink"
-    >
-      {priceRange}
-    </motion.span>
-  );
-}
-
-function ServiceRow({
+function ServiceCard({
   service,
   index,
 }: {
   service: (typeof services)[number];
   index: number;
 }) {
-  const reduceMotion = useReducedMotion();
-  const [hovered, setHovered] = useState(false);
-  // The underline draws in from the left and lifts back out to the right —
-  // the pen leaves from where it stopped, not from where it started.
-  const [origin, setOrigin] = useState<"left" | "right">("left");
+  const Icon = SERVICE_ICONS[service.id];
 
   return (
     <Reveal
-      as="li"
       index={index}
-      className="relative border-b border-rule py-6 first:pt-0 last:border-b-0"
-      onHoverStart={() => {
-        setOrigin("left");
-        setHovered(true);
-      }}
-      onHoverEnd={() => {
-        setOrigin("right");
-        setHovered(false);
-      }}
+      className="flex flex-col items-center rounded-2xl bg-paper-raised p-6 text-center sm:p-8"
     >
-      <div className="lg:grid lg:grid-cols-12 lg:items-center lg:gap-6">
-        <div className="lg:col-span-7">
-          <h3 className="font-display text-xl font-bold text-ink">{service.name}</h3>
-          <p className="mt-1.5 max-w-[65ch] text-base leading-relaxed text-ink-soft">
-            {service.description}
-          </p>
-        </div>
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 lg:col-span-5 lg:mt-0 lg:justify-end">
-          <PriceTag priceRange={service.priceRange} hovered={hovered} />
-          <Button asChild variant="outline" size="default">
-            <a
-              href="#contact"
-              onClick={() => {
-                if (typeof window !== "undefined") {
-                  window.dispatchEvent(
-                    new CustomEvent("asktwice:select-service", { detail: service.id })
-                  );
-                }
-              }}
-            >
-              Ask about this
-            </a>
-          </Button>
-        </div>
+      <span className="flex size-11 items-center justify-center rounded-full bg-pen-wash text-pen">
+        <Icon className="size-5" aria-hidden="true" />
+      </span>
+      <h3 className="mt-4 font-display text-xl font-semibold text-ink">{service.name}</h3>
+      <p className="mt-2 max-w-[38ch] text-base leading-relaxed text-ink-soft">
+        {service.description}
+      </p>
+      <div className="mt-6 flex flex-col items-center gap-3">
+        <span className="whitespace-nowrap font-display text-lg font-semibold tabular-nums text-ink">
+          {service.priceRange}
+        </span>
+        <Button asChild variant="outline" size="default">
+          <a
+            href="#contact"
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                window.dispatchEvent(
+                  new CustomEvent("asktwice:select-service", { detail: service.id })
+                );
+              }
+            }}
+          >
+            Ask about this
+          </a>
+        </Button>
       </div>
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-pen"
-        style={{ transformOrigin: origin }}
-        animate={{ scaleX: hovered ? 1 : 0 }}
-        transition={{ duration: reduceMotion ? 0 : 0.26, ease: "easeOut" }}
-      />
     </Reveal>
   );
 }
@@ -90,16 +76,17 @@ function ServiceRow({
 export function Services() {
   return (
     <SectionWrapper id="services" tone="sunken">
-      <SectionGrid note={<MarginNote>{copy.services.marginNote}</MarginNote>}>
-        <h2 className="font-display text-2xl font-bold tracking-[-0.02em] text-ink">
+      <div className="text-center">
+        <h2 className="font-display text-2xl font-semibold tracking-[-0.01em] text-ink">
           What I take on
         </h2>
-        <ul className="mt-8">
-          {services.map((service, index) => (
-            <ServiceRow key={service.id} service={service} index={index} />
-          ))}
-        </ul>
-      </SectionGrid>
+        <MarginNote className="mx-auto mt-2 w-fit">{copy.services.marginNote}</MarginNote>
+      </div>
+      <div className="mt-8 grid gap-5 sm:grid-cols-2">
+        {services.map((service, index) => (
+          <ServiceCard key={service.id} service={service} index={index} />
+        ))}
+      </div>
     </SectionWrapper>
   );
 }

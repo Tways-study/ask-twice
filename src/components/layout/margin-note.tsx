@@ -11,7 +11,7 @@ export function MarginNote({
   className?: string;
 }) {
   const reduceMotion = useReducedMotion();
-  const noteClass = cn("-rotate-2 font-hand text-sm text-pen lg:pr-4", className);
+  const noteClass = cn("-rotate-2 font-hand text-sm text-pen", className);
 
   if (reduceMotion) {
     return (

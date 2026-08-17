@@ -167,14 +167,14 @@ export function ContactForm() {
             transition={{ duration: reduceMotion ? 0 : 0.32 }}
             className="rounded-lg border border-white/10 py-12 text-center"
           >
-            <p className="font-display text-2xl font-bold text-ink-inverse">
+            <p className="font-display text-2xl font-semibold text-ink-inverse">
               {copy.contact.successTitle}
             </p>
             <p className="mt-2 text-ink-inverse/80">{copy.contact.successBody(submittedEmail)}</p>
             <button
               type="button"
               onClick={handleSendAnother}
-              className="mt-6 inline-flex h-11 items-center text-sm font-medium text-highlight underline underline-offset-4"
+              className="mt-6 inline-flex h-11 items-center text-sm font-medium text-ink-inverse underline underline-offset-4"
             >
               Send another request
             </button>
