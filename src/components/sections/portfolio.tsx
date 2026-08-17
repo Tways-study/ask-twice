@@ -6,6 +6,7 @@ import { ArrowUpRightIcon, FileTextIcon } from "lucide-react";
 
 import { copy, portfolioSamples, serviceTypeLabels, type PortfolioSample } from "@/lib/constants";
 import { type ServiceType } from "@/lib/schemas";
+import { cardHoverLift, revealCard } from "@/lib/motion";
 import { SectionWrapper } from "@/components/layout/section-wrapper";
 import { Reveal } from "@/components/layout/reveal";
 import { ProcessStrip } from "@/components/sections/process-strip";
@@ -42,14 +43,19 @@ function WorkCard({ sample, index }: { sample: Extract<PortfolioSample, { status
   const LinkIcon = isPdf ? FileTextIcon : ArrowUpRightIcon;
 
   return (
-    <Reveal index={index} className="flex flex-col overflow-hidden rounded-2xl bg-paper-raised text-center">
-      <div className="relative aspect-[16/10] w-full bg-paper-sunken">
+    <Reveal
+      index={index}
+      variants={revealCard(index)}
+      whileHover={cardHoverLift}
+      className="group relative flex flex-col overflow-hidden rounded-2xl bg-paper-raised text-center"
+    >
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-paper-sunken">
         <Image
           src={sample.thumbnail}
           alt={sample.alt}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          className="object-cover object-top"
+          className="object-cover object-top transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-[1.04]"
         />
       </div>
 
@@ -81,13 +87,26 @@ function WorkCard({ sample, index }: { sample: Extract<PortfolioSample, { status
           <LinkIcon className="size-4" aria-hidden="true" />
         </a>
       </div>
+
+      {/* The pen underlines it: same hover motif as ServiceCard, so the two
+          card grids feel like one system. */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] origin-left scale-x-0 bg-pen transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 group-focus-within:scale-x-100"
+      />
     </Reveal>
   );
 }
 
 function PlaceholderCard({ sample, index }: { sample: Extract<PortfolioSample, { status: "placeholder" }>; index: number }) {
   return (
-    <Reveal index={index} className="flex flex-col overflow-hidden rounded-2xl bg-paper-raised text-center">
+    // No hover lift here, unlike WorkCard — this card has no link, and a
+    // hover affordance on something unclickable is a false promise.
+    <Reveal
+      index={index}
+      variants={revealCard(index)}
+      className="flex flex-col overflow-hidden rounded-2xl bg-paper-raised text-center"
+    >
       <div className="relative flex aspect-[16/10] w-full items-end justify-center p-4">
         <DashedBorder />
         <Badge variant="highlight">{serviceTypeLabels[sample.serviceType]}</Badge>

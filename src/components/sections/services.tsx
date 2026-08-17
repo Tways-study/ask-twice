@@ -13,6 +13,7 @@ import {
 
 import { copy, services } from "@/lib/constants";
 import { type ServiceType } from "@/lib/schemas";
+import { cardHoverLift, revealCard } from "@/lib/motion";
 import { SectionWrapper } from "@/components/layout/section-wrapper";
 import { Reveal } from "@/components/layout/reveal";
 import { MarginNote } from "@/components/layout/margin-note";
@@ -41,9 +42,11 @@ function ServiceCard({
   return (
     <Reveal
       index={index}
-      className="flex flex-col items-center rounded-2xl bg-paper-raised p-6 text-center sm:p-8"
+      variants={revealCard(index)}
+      whileHover={cardHoverLift}
+      className="group relative flex flex-col items-center overflow-hidden rounded-2xl bg-paper-raised p-6 text-center sm:p-8"
     >
-      <span className="flex size-11 items-center justify-center rounded-full bg-pen-wash text-pen">
+      <span className="flex size-11 items-center justify-center rounded-full bg-pen-wash text-pen transition-transform duration-200 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-110">
         <Icon className="size-5" aria-hidden="true" />
       </span>
       <h3 className="mt-4 font-display text-xl font-semibold text-ink">{service.name}</h3>
@@ -69,6 +72,13 @@ function ServiceCard({
           </a>
         </Button>
       </div>
+
+      {/* The pen underlines it: a thin rule draws in on hover, the same
+          motif the row-based layout used before the card-grid redesign. */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] origin-left scale-x-0 bg-pen transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 group-focus-within:scale-x-100"
+      />
     </Reveal>
   );
 }

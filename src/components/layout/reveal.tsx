@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, type TargetAndTransition, type Variants } from "framer-motion";
 import { reveal } from "@/lib/motion";
 
 type HoverHandler = (event: PointerEvent, info: { point: { x: number; y: number } }) => void;
@@ -14,11 +14,20 @@ type HoverHandler = (event: PointerEvent, info: { point: { x: number; y: number 
 // on this same element instead of adding another wrapper. Under reduced
 // motion the fallback is a plain element, so the handlers are wired to
 // native mouse events instead — same hover state, no animation dependency.
+//
+// `variants` lets a caller swap the entrance choreography (e.g. cards settle
+// in with a touch of scale, per docs/05-design-brief.md) without every other
+// Reveal user inheriting it. `whileHover` is a gesture target layered on top
+// of the same motion value — framer composes it with the entrance variant
+// rather than fighting it, so a caller can add e.g. a card-lift without a
+// second wrapper. Both default to the original plain fade+rise with no hover.
 export function Reveal({
   children,
   index = 0,
   className,
   as = "div",
+  variants,
+  whileHover,
   onHoverStart,
   onHoverEnd,
 }: {
@@ -26,6 +35,8 @@ export function Reveal({
   index?: number;
   className?: string;
   as?: "div" | "li";
+  variants?: Variants;
+  whileHover?: TargetAndTransition;
   onHoverStart?: HoverHandler;
   onHoverEnd?: HoverHandler;
 }) {
@@ -35,7 +46,9 @@ export function Reveal({
     const Static = as;
     // Framer's onHoverStart/End take (PointerEvent, info); native mouse events
     // don't carry that shape, and every current caller ignores the arguments
-    // anyway, so the adapters below just drop them.
+    // anyway, so the adapters below just drop them. `whileHover` is dropped
+    // outright — a scale/lift gesture is exactly the kind of motion reduced-
+    // motion users are asking to skip.
     return (
       <Static
         className={className}
@@ -59,7 +72,8 @@ export function Reveal({
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
-      variants={reveal(index)}
+      variants={variants ?? reveal(index)}
+      whileHover={whileHover}
       onHoverStart={onHoverStart}
       onHoverEnd={onHoverEnd}
     >
