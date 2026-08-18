@@ -73,21 +73,24 @@ Marketing and client-intake website for Twice's freelance academic services. Sin
 ```
 src/
 ├── app/
-│   ├── layout.tsx          # Root layout, fonts, metadata
-│   ├── page.tsx             # Single page composing all sections
-│   ├── globals.css          # CSS custom properties (design tokens from design brief)
+│   ├── layout.tsx           # Root layout, fonts, metadata
+│   ├── page.tsx              # Single page composing all sections
+│   ├── globals.css           # CSS custom properties (design tokens from design brief)
+│   ├── opengraph-image.tsx   # Dynamic OG image (Next.js ImageResponse route)
 │   └── actions/
-│       └── contact.ts      # Server Action: validate + post to Formspree (+ tests)
+│       └── contact.ts       # Server Action: validate + post to Formspree (+ tests)
 ├── components/
-│   ├── sections/           # Hero, Services, Portfolio, About, Faq, Contact, Footer
-│   ├── ui/                 # shadcn components (customized to tokens)
-│   └── layout/             # StickyNav, AskPanel, SectionWrapper, Container, MarginNote, Highlight, Reveal
+│   ├── sections/            # Hero, Services, Portfolio, About, Faq, Contact, Footer
+│   │   └── process-strip.tsx  # 4-step sequence rendered inside Portfolio, not its own page.tsx section
+│   ├── ui/                  # shadcn components (customized to tokens)
+│   └── layout/              # StickyNav, AskPanel, SectionWrapper, Container, MarginNote, Highlight, Reveal, Logomark
 └── lib/
-    ├── schemas.ts          # Zod schemas (contactFormSchema, types) + tests
-    ├── constants.ts        # Service data, FAQ data, pricing, site metadata, copy
-    ├── chat-answers.ts     # AskPanel: intent table + matcher (+ tests)
-    ├── motion.ts            # Shared durations/easings from the design brief §5
-    └── utils.ts             # cn() and helpers
+    ├── schemas.ts           # Zod schemas (contactFormSchema, types) + tests
+    ├── constants.ts         # Service data, FAQ data, pricing, site metadata, copy
+    ├── chat-answers.ts      # AskPanel: intent table + matcher (+ tests)
+    ├── motion.ts             # Shared durations/easings from the design brief §5
+    ├── use-active-section.ts # IntersectionObserver hook driving StickyNav's active-link state
+    └── utils.ts              # cn() and helpers
 
 e2e/                         # Playwright specs
 vitest.config.mts · playwright.config.ts
